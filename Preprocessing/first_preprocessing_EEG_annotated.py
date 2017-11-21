@@ -10,6 +10,7 @@ import mne.io.eeglab
 
 from mne.preprocessing import ICA
 from mne.preprocessing import create_ecg_epochs
+from mne.preprocessing.ica import corrmap 
 
 # Build the digital montage of your eeg system
 # It's also possible to specifiy a path to a montage file
@@ -36,7 +37,7 @@ for x in range(1, 14):
     
     # Each time the loop goes through a new iteration, 
     # add a subject integer to the data path
-    data_path = 'G:\\DPX_EEG_fMRI\\EEG\\GradCorrected\\Sub%d.set' % (x) 
+    data_path = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/GradCorrected/Sub%d.set' % (x) 
     
     # Read the raw EEG data that has been corrected for gradient artifacts
     raw = mne.io.read_raw_eeglab(data_path, montage=montage, event_id=None, 
@@ -47,18 +48,20 @@ for x in range(1, 14):
     # that has the corect labels, channel types and positions
     raw.info = info_custom
     
-    # Specify channel types   
-    picks_ch = mne.pick_types(raw.info, meg=False, eeg=True, eog=False, ecg=True,
+    # Specify channel selections   
+    picks_eeg = mne.pick_types(raw.info, meg=False, eeg=True, eog=False, ecg=False,
                            stim=False)
     picks_ecg = mne.pick_types(raw.info, meg=False, eeg=False, eog=False, ecg=True,
+                           stim=False) 
+    picks_all = mne.pick_types(raw.info, meg=False, eeg=True, eog=False, ecg=True,
                            stim=False) 
     
     # Apply a band-pass filter with 0.5 Hz as lower cut-off and 30 Hz 
     # as higher cut-off, n_jobs as amount of parallel jobs to run (default = 1),
     # and fir_design as specification of your finite impulse response filter
     # Apply a second band-pass filter only to the ECG channel
-    raw.filter(0.5, 30., n_jobs=1, fir_design='firwin') 
-    raw.filter['ECG'](1, 20., n_jobs=1, fir_design='firwin') 
+    raw.filter(0.5, 30., n_jobs=1, fir_design='firwin', picks=picks_eeg) 
+    raw.filter(1, 20., n_jobs=1, fir_design='firwin', picks=picks_ecg) 
     
     # Specify the offline reference for your data with TP9 and TP10 
     # as mastoid reference
@@ -69,28 +72,29 @@ for x in range(1, 14):
     
     # Save raw data with same naming convention as above
     # with the addition of _preprocessed_raw.fif.gz
-    raw.save('G:\\DPX_EEG_fMRI\\EEG\\Sub%d_preprocessed_raw.fif.gz' % (x)) 
+    raw.save('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d_preprocessed_raw.fif.gz' % (x)) 
     
     # Specifiy ICA arguments
     # Specify the number of components for the ICA 
     # with decreasing explained variance of PCA
     n_components = 25  
     # Specify the ICA algorithm 
-    method = 'amica'
+    method = 'extended-infomax'
     # decim argument specifies the increment for selecting each nth time slice
     # If None, all samples within start and stop are used
     # Higher decimation decreases statistics accuracy, but saves time
-    decim = 3  
+    decim = 3 
     # Specify data rejection parameters with reject argument 
     # to avoid the distortion of ica components by large artifacts
-    picks_ica = dict(eeg=100e-6)
+    reject_eeg = dict(eeg=600e-6)
+    reject_ecg = dict(ecg=2000e-6)
     
     # Create ICA object
     ica = ICA(n_components=n_components, method=method) 
     # Fit ICA on raw data
-    ica.fit(raw, picks=picks_ica, decim=decim, reject=None) 
+    ica.fit(raw, picks=picks_eeg, decim=decim, reject=None) 
     # Save ICA object
-    ica.save('G:\\DPX_EEG_fMRI\\EEG\\Sub%d-ica.fif.gz' % (x)) 
+    ica.save('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d-ica.fif.gz' % (x)) 
     # Look at topomaps for all n components
     ica.plot_components() 
     # Plot specific properties (i.e. spectrum, activity image, etc)
@@ -100,13 +104,12 @@ for x in range(1, 14):
     # Create ECG epochs around likely artifact events and average them 
     # excluding data sections which represent large outliers
     # Rejection parameters are based on peak-to-peak amplitude
-    ecg_average = create_ecg_epochs(raw, reject=dict(ecg=250e-6),
-                                picks=picks_ch).average()
+    ecg_average = create_ecg_epochs(raw, reject=None).average()
     
     # Create ECG epochs around likely artifact events and correlate them
     # to all ICA component source signal time course
     # Build artifact scores via the correlation anaylsis
-    ecg_epochs = create_ecg_epochs(raw, reject=dict(ecg=250e-6))
+    ecg_epochs = create_ecg_epochs(raw, reject=None)
     ecg_inds, scores = ica.find_bads_ecg(ecg_epochs)
     
     # Plot the artifact scores / correlations across ICA components
@@ -117,3 +120,29 @@ for x in range(1, 14):
     # To improve your selection, inspect the ica components' 
     # source signal time course and compare it to the average ecg artifact 
     ica.plot_sources(ecg_average, exclude=ecg_inds)  
+  
+    
+# Choose a subject with a suitable reference ica (must contain representative
+# cardioballistic artifact components)
+# Build a reference ica and a list of all remaining icas from other subjects
+# Loop through all the remaining subejcts to load them in and append in the list
+reference_ica = ica
+icas_remaining_subjects = list()
+
+for i in range(1, 14):
+     data_path2 = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d-ica.fif.gz' % (i)
+     current_ica = mne.preprocessing.read_ica(data_path2)
+     icas_remaining_subjects.append(current_ica)
+
+all_icas = [reference_ica] + icas_remaining_subjects
+
+# Build a tuple with the reference ica and the index of the representative
+# component
+cardio_template = (0, ecg_inds[0])
+    
+# Run the corrmap algorithm to compare the artifact template to all other 
+# components from the remaining subjects
+# Find all components that correlate to the template
+fig_template, fig_detected = corrmap(all_icas, template=cardio_template, 
+                                     label="cardio", show=True, threshold=None,
+                                     ch_type='eeg')
