@@ -6,7 +6,7 @@
 - I wrote a first draft concerning the structure of my thesis and worked out an idea for a talk on open source EEG and fMRI analysis at the department o psychology
 
 3rd week:
--	I tested the amica algorithm for ICA in MNE on a single subject, which took longer than conventional algorithms (i.e. infomax extended) and produced good results
+-	I tested the amica algorithm for ICA in MNE on a single subject, which was not yet integrated as a standard algorithm. Yet, it is available as a prototype that is executable with a few more lines of code
 - I uploaded some text samples of my theoretical background for the paper
 - I worked on the correction approach that correlates ICA components with likely artifacts in the ECG in MNE, uploaded my preliminary solution to my preprocessing folder and added it to the preprocessing script
 
@@ -14,4 +14,4 @@
 -	I want to compare epoched data corrected with the amica algorithm with data corrected with the infomax extended algorithm
 - I want to add further text excerpts to my introduction and methods section
 - I want to start writing on a script for an idea for hierarchical linear modeling to predict variation in behavioural data with EEG- and fMRI-derived predictors
-- I want to improve the ECG-based correlational correction approach for ICA in MNE and compare corrected, epoched results from MATLAB and MNE
+- I want to improve the ECG-based correlational correction approach for ICA in MNE. By building template from a representative model artifact I want to re-create the PCA-based qrs template approach from many toolboxes in MATLAB (e.g. fMRIb plugin for MATLAB) with ICA in MNE
