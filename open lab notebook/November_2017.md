@@ -15,4 +15,5 @@
 4th week:
 - I conducted further literature research and studied current trends in single-trial coupling measures for fMRI (i.e. BOLD, connectivity) and EEG (i.e. oscillations, ERPs, phase coherence, phase-amplitude coupling) and updated my mendeley library
 - I re-evaluated and transferred all my self-report and cognitive data to a shared table
+- I uploaded some basic plotting code with seaborn for behavioural data (i.e. reaction times)
 - I continued writing on a script for hierarchical linear modeling to predict variation in behavioural, cognitive (i.e. digit-symbol coding test) or self-report data with EEG- and fMRI-derived predictors
