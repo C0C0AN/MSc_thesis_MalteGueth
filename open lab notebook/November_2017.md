@@ -13,7 +13,6 @@
 - I improved the ECG-based correlational correction approach for ICA in MNE by building a template from a representative ECG artifact as in the PCA-based qrs template approach from many toolboxes in MATLAB (e.g. fMRIb plugin for MATLAB)
 
 4th week:
-- I want to add further text excerpts to my introduction and methods section
-- I want to start writing nipype pipelines for parallel preprocessing of EEG and fMRI data
-- I want to continue writing on a script for an idea for hierarchical linear modeling to predict variation in behavioural, cognitive (i.e. digit-symbol coding test) or self-report data with EEG- and fMRI-derived predictors
-- I want to study how to write jupyter notebooks for open use of my scripts
+- I conducted further literature search and studied current trends in single-trial coupling measures for fMRI (i.e. BOLD, connectivity) and EEG (i.e. oscillations, ERPs, phase coherence, phase-amplitude coupling)
+- I re-evaluated and transferred all my self-report and cognitive data to a shared table
+- I continued writing on a script for hierarchical linear modeling to predict variation in behavioural, cognitive (i.e. digit-symbol coding test) or self-report data with EEG- and fMRI-derived predictors
