@@ -95,31 +95,42 @@ for x in range(1, 14):
     ica.fit(raw, picks=picks_eeg, decim=decim, reject=None) 
     # Save ICA object
     ica.save('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d-ica.fif.gz' % (x)) 
-    # Look at topomaps for all n components
-    ica.plot_components() 
-    # Plot specific properties (i.e. spectrum, activity image, etc)
-    # of a component with picks argument as component number
-    ica.plot_properties(raw, picks=0, psd_args={'fmax': 30.}) 
     
-    # Create ECG epochs around likely artifact events and average them 
-    # excluding data sections which represent large outliers
-    # Rejection parameters are based on peak-to-peak amplitude
-    ecg_average = create_ecg_epochs(raw, reject=None).average()
     
-    # Create ECG epochs around likely artifact events and correlate them
-    # to all ICA component source signal time course
-    # Build artifact scores via the correlation anaylsis
-    ecg_epochs = create_ecg_epochs(raw, reject=None)
-    ecg_inds, scores = ica.find_bads_ecg(ecg_epochs)
+# Look at topomaps for all n components of a subject
+ica.plot_components() 
+# Plot specific properties (i.e. spectrum, activity image, etc)
+# of a component with picks argument as component number
+ica.plot_properties(raw, picks=0, psd_args={'fmax': 30.}) 
+
+# Create ECG epochs around likely artifact events and average them 
+# excluding data sections which represent large outliers
+# Rejection parameters are based on peak-to-peak amplitude
+ecg_average = create_ecg_epochs(raw, reject=None).average()
+
+# Create ECG epochs around likely artifact events and correlate them
+# to all ICA component source signal time course
+# Build artifact scores via the correlation anaylsis
+ecg_epochs = create_ecg_epochs(raw, reject=None)
+ecg_inds, scores = ica.find_bads_ecg(ecg_epochs)
+
+# Plot the artifact scores / correlations across ICA components
+# and retrieve component numbers of sources likely representing
+# caridoballistic artifacts
+ica.plot_scores(scores, exclude=ecg_inds)
+
+# To improve your selection, inspect the ica components' 
+# source signal time course and compare it to the average ecg artifact 
+ica.plot_sources(ecg_average, exclude=ecg_inds)  
+
+# If no fruther artifact rejection improvement is required, use the ica.apply
+# for ica components to be zeroed out and removed from the signal
+# Enter an array of bad indices in exclude to remove components
+# start and end arguments mark the first and last sample of the set to be
+# affected by the removal
+
+ica.apply(raw, exclude=None, start=None, end=None)
     
-    # Plot the artifact scores / correlations across ICA components
-    # and retrieve component numbers of sources likely representing
-    # caridoballistic artifacts
-    ica.plot_scores(scores, exclude=ecg_inds)
-    
-    # To improve your selection, inspect the ica components' 
-    # source signal time course and compare it to the average ecg artifact 
-    ica.plot_sources(ecg_average, exclude=ecg_inds)  
   
     
 # Choose a subject with a suitable reference ica (must contain representative
@@ -146,3 +157,4 @@ cardio_template = (0, ecg_inds[0])
 fig_template, fig_detected = corrmap(all_icas, template=cardio_template, 
                                      label="cardio", show=True, threshold=None,
                                      ch_type='eeg')
+ica.exclude.extend(ecg_inds)

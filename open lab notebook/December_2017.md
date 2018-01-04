@@ -7,5 +7,8 @@
 - I tried the "Radon" example on multilevel modeling using PyStan (http://mc-stan.org/users/documentation/case-studies/radon.html) and PyMC3 (http://twiecki.github.io/blog/2014/03/17/bayesian-glms-3/)
 
 3rd week:
-- I want to continue writing on my behavioural prediction script
-- I want to add new text excerpts to my methods and introduction sections
+- I studied further literature on simultaneous EEG and fMRI as well as cognitive control for my introduction section
+- I downloaded literature into my Mendeley library and organised it
+
+4th week:
+- I added new text excerpts to my introduction section
