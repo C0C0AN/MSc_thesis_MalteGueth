@@ -5,9 +5,12 @@ Created on Fri Nov 10 06:25:12 2017
 @author: Malte
 """
 
-# Two ways of calculating the necessary sample size for a given effect and a desired power
+# Two ways of calculating the necessary sample size for a given effect, (group) variances,
+# and a desired power in a simple t-test
 
-# The first script is recreating the existing approach implemented in an R package
+# The first script is recreating the existing approach implemented in an R function power.prop.test 
+# Original post Matt Alcock on stackoverflow: https://i.stack.imgur.com/8q6Cb.gif
+
 from scipy.stats import norm, zscore
 
 def sample_power_probtest(p1, p2, power=0.8, sig=0.05):
@@ -32,27 +35,20 @@ if __name__ == '__main__':
     n = sample_power_difftest(0.25, 0.6, power=0.9, sig=0.05)
     print n 
     
-    
 
-from statsmodels.stats.power import tt_ind_solve_power
-
-mean_diff, sd_diff = 0.25, 0.55
-std_effect_size = mean_diff / sd_diff
-
-n = tt_ind_solve_power(effect_size=std_effect_size, alpha=0.05, power=0.9, ratio=1, alternative='two-sided')
-print('Number in *each* group: {:.5f}'.format(n))
-
-
-
+# The second script is an iterative approach using scipy.stats.
+# This script gives out the achieved power with an increasing n per group until
+# the desired power level is reached.
+# Original post: http://www.djmannion.net/psych_programming/data/power/power.html
 
 import numpy as np
 
 import scipy.stats
 
-# start at 20 participants
+# start at 70 participants
 n_per_group = 70
 
-# effect size = 0.8
+# effect size = 0.25
 group_means = [0.25, 0.5]
 group_sigmas = [0.65, 0.65]
 
@@ -103,145 +99,3 @@ while current_power < desired_power:
 
     # increase the number of samples by one for the next iteration of the loop
     n_per_group += 1
-
-# this is a bit tricky
-# what we want to save is an array with 2 columns, but we have 2 different 1D
-# arrays. here, we use the 'np.newaxis' property to add a column each of the
-# two 1D arrays, and then 'stack' them horizontally
-array_to_save = np.hstack(
-    [
-        ns_per_group[:, np.newaxis],
-        power[:, np.newaxis]
-    ]
-)
-
-power_path = "prog_data_vis_power_sim_data.tsv"
-
-np.savetxt(
-    power_path,
-    array_to_save,
-    delimiter="\t",
-    header="Simulated power as a function of samples per group"
-)
-
-
-import numpy as np
-
-power_path = "prog_data_vis_power_sim_data.tsv"
-
-power = np.loadtxt(power_path, delimiter="\t")
-
-# number of n's is the number of rows
-n_ns = power.shape[0]
-
-ns_per_group = power[:, 0]
-power_per_ns = power[:, 1]
-
-
-
-
-
-import numpy as np
-
-import veusz.embed
-
-power_path = "prog_data_vis_power_sim_data.tsv"
-
-power = np.loadtxt(power_path, delimiter="\t")
-
-# number of n's is the number of rows
-n_ns = power.shape[0]
-
-ns_per_group = power[:, 0]
-power_per_ns = power[:, 1]
-
-embed = veusz.embed.Embedded("veusz")
-
-page = embed.Root.Add("page")
-page.width.val = "8.4cm"
-page.height.val = "8cm"
-
-graph = page.Add("graph", autoadd=False)
-
-x_axis = graph.Add("axis")
-y_axis = graph.Add("axis")
-
-
-# do the typical manipulations to the axis apperances
-graph.Border.hide.val = True
-
-typeface = "Arial"
-
-for curr_axis in [x_axis, y_axis]:
-
-    curr_axis.Label.font.val = typeface
-    curr_axis.TickLabels.font.val = typeface
-
-    curr_axis.autoMirror.val = False
-    curr_axis.outerticks.val = True
-
-embed.WaitForClose()
-
-
-
-
-import numpy as np
-
-import veusz.embed
-
-power_path = "prog_data_vis_power_sim_data.tsv"
-
-power = np.loadtxt(power_path, delimiter="\t")
-
-# number of n's is the number of rows
-n_ns = power.shape[0]
-
-ns_per_group = power[:, 0]
-power_per_ns = power[:, 1]
-
-embed = veusz.embed.Embedded("veusz")
-
-page = embed.Root.Add("page")
-page.width.val = "8.4cm"
-page.height.val = "8cm"
-
-graph = page.Add("graph", autoadd=False)
-
-x_axis = graph.Add("axis")
-y_axis = graph.Add("axis")
-
-# let veusz know about the data
-embed.SetData("ns_per_group", ns_per_group)
-embed.SetData("power_per_ns", power_per_ns)
-
-xy = graph.Add("xy")
-
-xy.xData.val = "ns_per_group"
-xy.yData.val = "power_per_ns"
-
-# set the x ticks to be at every 2nd location we sampled
-x_axis.MajorTicks.manualTicks.val = ns_per_group[::2].tolist()
-x_axis.MinorTicks.hide.val = True
-x_axis.label.val = "Sample size per group"
-x_axis.min.val = float(np.min(ns_per_group) - 5)
-x_axis.max.val = float(np.max(ns_per_group) + 5)
-
-# sensible to include the whole range here
-y_axis.min.val = 0.0
-y_axis.max.val = 1.0
-y_axis.label.val = "Power (for d = 0.8)"
-
-# do the typical manipulations to the axis apperances
-graph.Border.hide.val = True
-
-typeface = "Arial"
-
-for curr_axis in [x_axis, y_axis]:
-
-    curr_axis.Label.font.val = typeface
-    curr_axis.TickLabels.font.val = typeface
-
-    curr_axis.autoMirror.val = False
-    curr_axis.outerticks.val = True
-
-embed.WaitForClose()
