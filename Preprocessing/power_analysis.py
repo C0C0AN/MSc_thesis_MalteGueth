@@ -5,7 +5,9 @@ Created on Fri Nov 10 06:25:12 2017
 @author: Malte
 """
 
+# Two ways of calculating the necessary sample size for a given effect and a desired power
 
+# The first script is recreating the existing approach implemented in an R package
 from scipy.stats import norm, zscore
 
 def sample_power_probtest(p1, p2, power=0.8, sig=0.05):
