@@ -49,7 +49,10 @@ df1 = pd.DataFrame({'Impulsive-Nonconformity': dataIN,
 
 df2 = pd.melt(df1, "Psychopathy", var_name="Scales", value_name="T-Value")
 
-sns.set(style="white")
+sns.set(style="dark")
+sns.set_context("poster")
+
+# Stripplot
 
 f, ax = plt.subplots()
 sns.despine(bottom=True, left=True)
@@ -67,6 +70,7 @@ ax.legend(handles[2:], labels[2:], title="Psychopathy Group",
           handletextpad=0, columnspacing=2,
           loc="best", ncol=1, frameon=True)
 
+# Violinplot
 
 f, ax = plt.subplots()
 sns.set(font_scale = 1.5)
@@ -75,6 +79,20 @@ sns.violinplot(x="Scales", y="T-Value", hue="Psychopathy",
                saturation=0.7, data=df2, split=True,
                inner="quart", palette={"High Psychopathy": "b", "Low Psychopathy": "c"}, bbox_inches="tight")
 sns.despine(left=True)
+plt.xticks(rotation=70)
+handles, labels = ax.get_legend_handles_labels()
+ax.legend(handles[2:], labels[2:], title=None,
+          handletextpad=0, columnspacing=2,
+          loc="best", ncol=1, frameon=True)
+
+# Boxplot
+
+f, ax = plt.subplots()
+sns.set(font_scale = 1.5)
+
+sns.boxplot(x="Scales", y="T-Values", hue="Psychopathy", data=df2, orient="v", 
+            palette="Set2", saturation=0.8)
+sns.despine(offset=10, trim=True)
 plt.xticks(rotation=70)
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles[2:], labels[2:], title=None,
