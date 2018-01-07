@@ -14,8 +14,12 @@ Created on Fri Jan 5 12:14:15 2018
 # (3) A source space (positions of the candidate source locations)
 #
 # (1) can be done using mne watershed_bem or mne flash_bem in the terminal
-# These require a subject directory from freesurfer and a subject name
-# (2)
+# These require the subject directory from freesurfer and a subject name
+# (2) can be computed by either using the command line tools mne_analyze (Unix) or mne coreg
+# A guide on how to perform the coregistration and creating the trans fif file 
+# can be found here: https://de.slideshare.net/mne-python/mnepythyon-coregistration-28598463
+# (3) can be setup very conviently with the function mne.setup_source_space 
+# by providing a subject directory and the raw eeg file
 
 import mne
 
