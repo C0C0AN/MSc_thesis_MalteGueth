@@ -4,12 +4,13 @@ Created on Fri Jan 5 12:14:15 2018
 @author: Malte
 """
 
-# Script for computing a head model and forward modeling
-# Before running you need to preprocess your sMRI data with freesurfer and perform three computations:
+# Script for computing a head model and for forward modeling
+# Before running you need your sMRI data processed in freesurfer, the corresponding subject directories
+# and you need to perform three computations:
 #
 # (1) BEM surfaces (triangulations of the interfaces between different tissues)
 # (2) A transformation file with the ending '-trans.fif' 
-# (info file from coregestering the MRI data with a subject’s head shape 
+# (info file from coregestering the sMRI data with a subject’s head shape 
 # to position the head and the sensors in a common coordinate system)
 # (3) A source space (positions of the candidate source locations)
 #
@@ -18,7 +19,7 @@ Created on Fri Jan 5 12:14:15 2018
 # (2) can be computed by either using the command line tools mne_analyze (Unix) or mne coreg
 # A guide on how to perform the coregistration and creating the trans fif file 
 # can be found here: https://de.slideshare.net/mne-python/mnepythyon-coregistration-28598463
-# (3) can be setup very conviently with the function mne.setup_source_space 
+# (3) can be setup very conveniently with the function mne.setup_source_space 
 # by providing a subject directory and the raw eeg file
 
 import mne
@@ -41,9 +42,9 @@ src = mne.setup_source_space(subject_mri, spacing='oct6',
                              subjects_dir=subjects_dir, add_dist=False)
 print(src)
 
-import numpy as np  # noqa
-from mayavi import mlab  # noqa
-from surfer import Brain  # noqa
+import numpy as np
+from mayavi import mlab
+from surfer import Brain
 
 brain = Brain('sample', 'lh', 'inflated', subjects_dir=subjects_dir)
 surf = brain.geo['lh']
@@ -53,7 +54,7 @@ vertidx = np.where(src[0]['inuse'])[0]
 mlab.points3d(surf.x[vertidx], surf.y[vertidx],
               surf.z[vertidx], color=(1, 1, 0), scale_factor=1.5)
 
-conductivity = (0.3, 0.006, 0.3)  # for single layer
+conductivity = (0.3)  # for single layer
 # conductivity = (0.3, 0.006, 0.3)  # for three layers
 model = mne.make_bem_model(subject='sample', ico=4,
                            conductivity=conductivity,
