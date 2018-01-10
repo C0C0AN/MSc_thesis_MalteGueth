@@ -3,7 +3,8 @@
 - Together with my supervisor, Peer Herholz, I discussed how to transfer my data and analyses from Matlab to an entirely open science based platform (i.e. MNE-python, Nipype, etc.)
 
 2nd week:
-- 
+- To compare my past approach in identifying events in the ECG in EEGLAB, I downloaded the trial version of the kubios software (https://www.kubios.com) and added Macros from Brain Vision Analyzer to the comparison
+- I preprocessed the ECG with all three softwares and tried to find R-peaks, to compute the heart rate variability and to generally identify the cardiac cycle
 
 3rd week:
 - ___Start of official documentation and updating of my progress on GitHub___
