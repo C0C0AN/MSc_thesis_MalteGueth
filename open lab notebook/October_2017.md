@@ -1,4 +1,10 @@
+
+2nd week: 
+- I continued studying EEG preprocessing in MNE-python
+- I visited a conference in Rauischholzhausen where EEG, fNIRS as well as combined fNIRS and fMRI recordings were discussed to present my preliminary results on the DPX task in EEG, EEG-fNIRS and EEG-fMRI
+
 3rd week: 
+___- Start of official documentation of my progress on GitHub___
 - I continued studying EEG preprocessing in MNE-python and searched for analysis scripts, forum discussions or tutorials aimed at cleaning artifacts from combined EEG-fMRI recordings (i.e. gradient artifacts, cardiballistic artifacts)
 - A preliminary attempt at a scripted EEG preprocessing till ICA for EEG data from combined recordings was uploaded (see preprocessing folder)
 - I discussed the intermediate status of my thesis with Peer and Jens and started making plans for 
