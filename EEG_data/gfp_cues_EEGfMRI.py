@@ -11,10 +11,10 @@ import seaborn as sns
 # and save the plots as pdf. Load single subject evoked data and create lists for all epochs (i.e. Cue A and B).
 
 listA = [evoked1_A, evoked2_A, evoked3_A, evoked4_A, evoked5_A, evoked6_A, evoked7_A, 
-         evoked8_A, evoked9_A, evoked10_A, evoked11_A]
+         evoked8_A, evoked9_A, evoked10_A, evoked11_A, evoked12_A, evoked13_A]
 
 listB = [evoked1_B, evoked2_B, evoked3_B, evoked4_B, evoked5_B, evoked6_B, evoked7_B, 
-         evoked8_B, evoked9_B, evoked10_B, evoked11_B]
+         evoked8_B, evoked9_B, evoked10_B, evoked11_B, evoked12_A, evoked13_A]
 
 
 evoked_A = mne.grand_average(listA)

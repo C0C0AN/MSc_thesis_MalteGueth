@@ -3,3 +3,15 @@
 - I uploaded my first draft for forward modeling of EEG data informed by structural MRI data and annotations 
 on how to compute the BEM surfaces, the transformation fif file from coregestering the structural data with 
 the eeg sensors and their common source space
+
+2nd week
+
+- I uploaded more ways for plotting ERP data in mne-python
+- I added a nipype preprocessing script for my MRI data based on the nipype tutorials (https://miykael.github.io/nipype_tutorial/)
+- I added details on the experimental setup, graphs and results for both single and multimodal data fusion analyses
+
+3rd week
+
+- I computed each subject’s BEM surfaces for the MRI-informed forward modelling
+- I did further literature research (particularly on the comparison of simultaneous and parallel EEG-fMRI) for my master thesis 
+and continued writing on my introduction and methods section 

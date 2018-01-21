@@ -7,7 +7,7 @@ Created on Fri Nov 10 06:25:12 2017
 # and a desired power in a simple t-test
 
 # The first script is recreating the existing approach implemented in an R function power.prop.test 
-# Original post Matt Alcock on stackoverflow: https://i.stack.imgur.com/8q6Cb.gif
+# Original post Matt Alcock on stackoverflow: https://stackoverflow.com/questions/15204070/is-there-a-python-scipy-function-to-determine-parameters-needed-to-obtain-a-ta
 
 from scipy.stats import norm, zscore
 
