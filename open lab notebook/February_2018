@@ -10,4 +10,8 @@ supervisors for a frist feedback round
 for my thesis and handed in my introduction section to my supervisors for provisional feedback
 
 3rd week
-- In the next days I want to finish my methods section and upload more code to my repo
+- I added further excerpts to my methods section, but could not finish it yet
+- After sending my provisional introduction section to my supervisors, I received some feeback, integrated 
+my superviors' suggestions and corrected mistakes they pointed out to me
+- I uploaded some code snippets for building my multilevel model for predicting behavioral data with unimodal and
+multimodal predictors, using lme4 in R instead of pystan or pymc3
