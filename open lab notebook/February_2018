@@ -1,5 +1,5 @@
 1st week
-- In preparation for finalising my master thesis, I'm planning to submit my introduction and methods section to my
+- In preparation for finalizing my master thesis, I'm planning to submit my introduction and methods section to my
 supervisors for a frist feedback round
 - Due to exam and interview preparations, I changed plans and instead of focusing on text production, I shifted to code optimization
 - I uploaded further excerpts and notes for hierarchical modeling and multiway partial least squares regression for EEG-fMRI
@@ -15,3 +15,11 @@ for my thesis and handed in my introduction section to my supervisors for provis
 my superviors' suggestions and corrected mistakes they pointed out to me
 - I uploaded some code snippets for building my multilevel model for predicting behavioral data with unimodal and
 multimodal predictors, using lme4 in R instead of pystan or pymc3
+
+4th week
+- Since I had trouble with my publisher with my recent book manuscript, I had to delay writing my methods section
+- While writing my methods, I noticed that it was not as straightforward as expected to choose the appropriate section 
+for details on best practices for EEG and MRI preparations which do not exclusively relate to simultaneous experiments
+- To figure out a sensible structure, I researched in an thesis previously writtn at the Department of Psychology 
+involving an EEG-fMRI experiment
+- I uploaded text excerpts on the sample, the general procedure and the paradigm of my experiment
