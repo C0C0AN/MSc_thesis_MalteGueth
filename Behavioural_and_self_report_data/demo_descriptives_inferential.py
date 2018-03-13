@@ -8,7 +8,8 @@ Created on Sun Jan 08 09:27:51 2018
 # seaborn and scipy statistics
 
 import pandas
-data = pandas.read_csv('/Users/maltegueth/downloads/self_report_data.csv', sep=';', na_values="none")
+data = pd.read_csv('/Volumes/INTENSO/DPX_EEG_fMRI/Behavioral_Data/self_report_data.csv', 
+                   sep=';', na_values="none")
 
 # Basic descriptives and t-test
 
