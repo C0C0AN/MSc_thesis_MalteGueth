@@ -37,6 +37,10 @@ cols = rt_data.columns.tolist()
 cols = cols[-1:] + cols[:-1]
 rt_data = rt_data[cols]
 rt_data['rt'] = pd.to_numeric(rt_data['rt'])
+rt_data['block'] = pd.to_numeric(rt_data['block'])
+rt_data['trialtype'] = pd.to_numeric(rt_data['trialtype'])
+rt_data['ID'] = pd.to_numeric(rt_data['ID'])
+rt_data['trial'] = pd.to_numeric(rt_data['trial'])
 
 # For later calculation of error rates, get some descriptive data on valid and invalid responses
 # Then, filter the dataframe with all RT data for invalid, too quick or too slow respones
