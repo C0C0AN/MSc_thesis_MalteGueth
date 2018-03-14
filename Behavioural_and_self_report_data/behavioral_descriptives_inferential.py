@@ -58,6 +58,9 @@ def get_stats(group):
             'mean': group.mean(), 'sd': group.std()}
 stats = rt_corrects['rt'].groupby([rt_data['block'], rt_data['trialtype']]).apply(get_stats).unstack()
 
+count_trialtypes = rt_corrects['rt'].groupby([rt_data['trialtype']]).apply(get_stats).unstack()
+count_trialtypes = count_trialtypes/13
+
 rt_corrects_means = rt_corrects[['block', 'trialtype', 'rt']]
 rt_corrects_means = rt_corrects_means.groupby([rt_corrects_means['block'], 
                                                rt_corrects_means['trialtype']]).mean().add_prefix('mean_')
