@@ -1,3 +1,6 @@
+# Read in reaction times and reaction types by block, trial and trialtype ('rawdata.txt')
+# Get some basic descriptive and inferential statistics
+
 # This section on reading data and creating tables, starting at this point has been written by José Alanis
 # for usage in the section of neuropsychology
 #############################################
@@ -14,8 +17,8 @@ rt_data <- dplyr::rename(rt_data,
                          Block = V2, 
                          Trial = V4, 
                          Trial_Type = V6, 
-                         RT = V8, 
-                         Reaction = V10)
+                         RT = V10, 
+                         Reaction = V12)
 
 rt_data <- dplyr::select(rt_data, ID, Block, Trial, Trial_Type, Reaction, RT)
 
