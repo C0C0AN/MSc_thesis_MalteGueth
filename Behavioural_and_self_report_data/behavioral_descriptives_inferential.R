@@ -1,3 +1,7 @@
+#####
+##### Code snippets for processing behavioral data
+##### 
+
 # Read in reaction times and reaction types by block, trial and trialtype ('rawdata.txt')
 # Get some basic descriptive and inferential statistics
 
