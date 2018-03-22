@@ -37,6 +37,10 @@ cols = rt_data.columns.tolist()
 cols = cols[-1:] + cols[:-1]
 rt_data = rt_data[cols]
 rt_data['rt'] = pd.to_numeric(rt_data['rt'])
+rt_data['block'] = pd.to_numeric(rt_data['block'])
+rt_data['trialtype'] = pd.to_numeric(rt_data['trialtype'])
+rt_data['ID'] = pd.to_numeric(rt_data['ID'])
+rt_data['trial'] = pd.to_numeric(rt_data['trial'])
 
 # For later calculation of error rates, get some descriptive data on valid and invalid responses
 # Then, filter the dataframe with all RT data for invalid, too quick or too slow respones
@@ -53,6 +57,9 @@ def get_stats(group):
     return {'min': group.min(), 'max': group.max(), 'count': group.count(),
             'mean': group.mean(), 'sd': group.std()}
 stats = rt_corrects['rt'].groupby([rt_data['block'], rt_data['trialtype']]).apply(get_stats).unstack()
+
+count_trialtypes = rt_corrects['rt'].groupby([rt_data['trialtype']]).apply(get_stats).unstack()
+count_trialtypes = count_trialtypes/13
 
 rt_corrects_means = rt_corrects[['block', 'trialtype', 'rt']]
 rt_corrects_means = rt_corrects_means.groupby([rt_corrects_means['block'], 
