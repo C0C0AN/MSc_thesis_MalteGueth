@@ -46,13 +46,21 @@ raw = mne.io.read_raw_eeglab(data_path, montage=montage, event_id=None,
 # that has the corect labels, channel types and positions
 raw.info = info_custom
 
-raw.save('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/GradCorrected/Sub1_preprocessed_raw.fif.gz') 
-
 # Specify channel selections   
 picks_eeg = mne.pick_types(raw.info, meg=False, eeg=True, eog=False, ecg=False,
                        stim=False)
 picks_ecg = mne.pick_types(raw.info, meg=False, eeg=False, eog=False, ecg=True,
                        stim=False) 
+
+raw.filter(0.5, 30., n_jobs=1, fir_design='firwin', picks=picks_eeg) 
+raw.filter(1, 20., n_jobs=1, fir_design='firwin', picks=picks_ecg) 
+
+# Specify the offline reference for your data with TP9 and TP10 
+# as mastoid reference
+raw.set_eeg_reference(ref_channels=['TP9','TP10']) 
+
+# Resample the data from 5 kHz to 250 Hz
+raw.resample(250, npad="auto") 
 
 # Specifiy ICA arguments
 # Specify the number of components for the ICA 
@@ -66,13 +74,13 @@ method = 'extended-infomax'
 decim = 3 
 # Specify data rejection parameters with reject argument 
 # to avoid the distortion of ica components by large artifacts
-reject_eeg = dict(eeg=100e-6)
+reject_eeg = dict(eeg=1000e-6)
 reject_ecg = dict(ecg=2000e-6)
 
 # Create ICA object
 ica = ICA(n_components=n_components, method=method) 
 # Fit ICA on raw data
-ica.fit(raw, picks=picks_eeg, decim=decim, reject=None) 
+ica.fit(raw, picks=picks_eeg, decim=decim, reject=reject_eeg) 
 
 # Create ECG epochs around likely artifact events and average them 
 # excluding data sections which represent large outliers
@@ -89,48 +97,15 @@ ecg_inds, scores = ica.find_bads_ecg(ecg_epochs)
 # and retrieve component numbers of sources likely representing
 # caridoballistic artifacts
 fig1 = ica.plot_scores(scores, title='ICA component scores subject 10',
-                    exclude=[5,10,17,18,24], 
+                    exclude=[0,1,3,5,6,7,10,11,12,14], 
                     show=True, 
                     axhline=0.5)
 
 # To improve your selection, inspect the ica components' 
 # source signal time course and compare it to the average ecg artifact 
-fig2 = ica.plot_sources(ecg_average, exclude=ecg_inds)  
+fig2 = ica.plot_sources(ecg_average, exclude=[0,1,3,5,6,7,10,11,12,14])  
 
-# If no fruther artifact rejection improvement is required, use the ica.apply
-# for ica components to be zeroed out and removed from the signal
-# Enter an array of bad indices in exclude to remove components
-# start and end arguments mark the first and last sample of the set to be
-# affected by the removal
-
-ica.apply(raw, exclude=None, start=None, end=None)
-    
-# Choose a subject with a suitable reference ica (must contain representative
-# cardioballistic artifact components)
-# Build a reference ica and a list of all remaining icas from other subjects
-# Loop through all the remaining subejcts to load them in and append in the list
-reference_ica = ica
-icas_remaining_subjects = list()
-
-for i in range(1, 14):
-     data_path2 = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d-ica.fif.gz' % (i)
-     current_ica = mne.preprocessing.read_ica(data_path2)
-     icas_remaining_subjects.append(current_ica)
-
-all_icas = [reference_ica] + icas_remaining_subjects
-
-# Build a tuple with the reference ica and the index of the representative
-# component
-cardio_template = (0, ecg_inds[0])
-    
-# Run the corrmap algorithm to compare the artifact template to all other 
-# components from the remaining subjects
-# Find all components that correlate to the template
-fig_template, fig_detected = corrmap(all_icas, template=cardio_template, 
-                                     label="cardio", show=True, threshold=None,
-                                     ch_type='eeg')
-ica.exclude.extend(ecg_inds)
-
-pp=PdfPages('fig.pdf')
-pp.savefig(fig)
+pp=PdfPages('sub10.pdf')
+pp.savefig(fig1)
+pp.savefig(fig2)
 pp.close()
