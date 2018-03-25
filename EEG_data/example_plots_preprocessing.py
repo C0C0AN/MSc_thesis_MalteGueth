@@ -12,7 +12,6 @@ import mne.io.eeglab
 
 from mne.preprocessing import ICA
 from mne.preprocessing import create_ecg_epochs
-from mne.preprocessing.ica import corrmap
 
 from matplotlib.backends.backend_pdf import PdfPages 
 
