@@ -1,7 +1,8 @@
 #####
 ##### Script and examples for multiway partial least squares in R as recently implemented in the sNPLS package
 ##### by David Hervas (https://github.com/David-Hervas) in NPLS Regression with L1 Penalization
-##### 
+##### View on CRAN: https://cran.r-project.org/web/packages/sNPLS/index.html
+#####
 
 # Example:
 
