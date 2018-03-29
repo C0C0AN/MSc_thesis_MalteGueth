@@ -72,12 +72,15 @@ sns.set_context("notebook")
 
 f, ax = plt.subplots()
   
-sns.boxplot(x="block", y="rt", hue='trialtype', data=rt_corrects, palette="PRGn")
+boxplot = sns.boxplot(x="block", y="rt", hue='trialtype', data=rt_corrects, palette="PRGn")
 sns.despine(offset=10, trim=True)
 handles, labels = ax.get_legend_handles_labels()
 ax.legend(handles[4:], labels[4:], title=None,
           handletextpad=0, columnspacing=2,
           loc="best", ncol=1, frameon=True)
+
+boxplot = ax.get_figure()
+boxplot.savefig('boxplot.pdf')
 
 # First, let's look at all RT disregarding trialtypes and blocks to get an overview of the distribution
 # by creating a 2x2 figures showing four panels with kernel and histogram estimates
