@@ -35,7 +35,7 @@ rt_data$Reaction <- plyr::revalue(rt_data$Reaction, c(' hit' = 'correct', ' inco
 rt_corrects <- dplyr::filter(rt_data, Reaction == 'correct')
 rt_corrects$Trial_Type <- as.factor(rt_corrects$Trial_Type)
 
-rt_corrects_average <- plyr::ddply(Corrects, c('Trial_Type'), dplyr::summarise,
+rt_corrects_average <- plyr::ddply(rt_corrects, c('Trial_Type'), dplyr::summarise,
                                 Sum    = sum(!is.na(RT)),
                                 Mean_RT = mean(RT),
                                 sd   = sd(RT),
