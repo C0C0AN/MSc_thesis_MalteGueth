@@ -43,7 +43,15 @@ rt_corrects_average <- plyr::ddply(rt_corrects, c('trialtype'), dplyr::summarise
                                    ci   = se * qt(.95/2 + .5, Sum-1)
 )
 
-rt_corrects_average_blocks <- plyr::ddply(rt_corrects, c('trialtype', 'Block'), dplyr::summarise,
+rt_corrects_average_subs <- plyr::ddply(rt_corrects, c('Subject', 'Block', 'trialtype'), dplyr::summarise,
+                                          Sum    = sum(!is.na(RT)),
+                                          Mean_RT = mean(RT),
+                                          sd   = sd(RT),
+                                          se   = sd / sqrt(Sum),
+                                          ci   = se * qt(.95/2 + .5, Sum-1)
+)
+
+rt_corrects_average_blocks <- plyr::ddply(rt_corrects, c('Block', 'trialtype'), dplyr::summarise,
                                     Sum    = sum(!is.na(RT)),
                                     Mean_RT = mean(RT),
                                     sd   = sd(RT),
@@ -55,32 +63,49 @@ rt_corrects_average_blocks <- plyr::ddply(rt_corrects, c('trialtype', 'Block'), 
 
 # Build new variable in averaged data frame for the proactive behavioral shift index (PSI)
 
-rt_corrects_average_blocks$PSI <- (rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==3] 
-                             - rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==2])/
-                            (rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==3] 
-                             + rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==2])
+require(tidyr)
+
+PSI_blocks_subs <- dplyr::filter(rt_corrects_average_subs, trialtype %in% c(2, 3))
+PSI_blocks_subs <- dplyr::select(PSI_blocks_subs, Subject, Block, trialtype, Mean_RT)
+PSI_blocks_subs <- spread(PSI_blocks_subs, trialtype, Mean_RT, drop = TRUE)
+PSI_blocks_subs <- dplyr::rename(PSI_blocks_subs, RT_BX = '2', RT_AY = '3')
+
+PSI_blocks_subs$PSI <- (PSI_blocks_subs$RT_AY - PSI_blocks_subs$RT_BX)/
+                                 (PSI_blocks_subs$RT_AY + PSI_blocks_subs$RT_BX)
+
+PSI_blocks_subs <- plyr::ddply(PSI_blocks_subs, c('Block'), dplyr::summarise,
+                                          Sum    = sum(!is.na(PSI)),
+                                          Mean_PSI = mean(PSI),
+                                          sd   = sd(PSI),
+                                          se   = sd / sqrt(Sum),
+                                          ci   = se * qt(.95/2 + .5, Sum-1)
+)
 
 # Build new data frame for errors and error rates by block and trialtype
 
 incorrects <- dplyr::filter(rt_data, Reaction == 'incorrect')
 incorrects$trialtype <- as.factor(incorrects$trialtype)
 
+incorrects_average <- plyr::ddply(incorrects, c('Subject', 'Block', 'trialtype'), dplyr::summarise,
+                                         Errors    = sum(!is.na(Reaction)))
+
 incorrects_average_blocks <- plyr::ddply(incorrects, c('trialtype', 'Block'), dplyr::summarise,
-                                          Sum    = sum(!is.na(Reaction=='incorrect')),
-                                          Mean = mean(Sum),
-                                          sd   = sd(Sum),
-                                          se   = sd / sqrt(Sum),
-                                          ci   = se * qt(.95/2 + .5, Sum-1)
-)
+                              Errors    = sum(!is.na(Reaction)))
+
+incorrects_average$ER <- (incorrects_average$Sum[incorrects_average$trialtype == 1 && incorrects_average$Block == 1]
+                                   - rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==2])/
+                                  (rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==3] 
+                                   + rt_corrects_average_blocks$Mean_RT[rt_corrects_average_blocks$trialtype==2])
 
 MLnoIntercept <- glm(RT ~ Block + trialtype, data = rt_corrects) # ML model
 print(MLnoIntercept)
 anova(MLnoIntercept, test = "F")
 
-ML <- glm(RT ~ Block + trialtype:Block, data = rt_corrects)
+MLRT <- glm(RT ~ Block + trialtype:Block, data = rt_corrects)
 anova(ML, test = "F")
 
-
+MLPSI <- glm(PSI ~ Block + trialtype:Block, data = rt_corrects)
+anova(ML, test = "F")
 
 require(ggplot2)
 require(viridis)
@@ -93,3 +118,12 @@ ggplot(rt_corrects_average_blocks, aes(x = Block, y = Mean_RT, fill = trialtype)
   coord_cartesian(ylim = c(300, 550)) +
   labs(x = "block", y = "reaction times [ms]") +
   theme_classic()
+
+ggplot(PSI_blocks_subs, aes(x = Block, y = Mean_PSI)) + 
+  geom_bar(position = position_dodge(), stat = 'identity') +
+  geom_errorbar(aes(ymin=Mean_PSI - se, ymax=Mean_PSI+se), width=.2, position = position_dodge(.9)) +
+  scale_fill_viridis(option = 'A', discrete = T, begin = 0.15, end = .85) +
+  coord_cartesian(ylim = c(0.1, 0.3)) +
+  labs(x = "block", y = "PSI") +
+  theme_classic()
+
