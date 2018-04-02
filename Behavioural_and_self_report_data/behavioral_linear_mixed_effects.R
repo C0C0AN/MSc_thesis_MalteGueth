@@ -33,7 +33,7 @@ psi_rt_data <- dplyr::select(psi_data, Subject, Block, PSI)
 psi_rt_data$Block <- as.factor(psi_data$Block)
 
 # Recode data so that block has the range 0 to 3 for coding trialtypes for contrasts
-psi_rt_data$Block <- plyr::revalue(psi_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+psi_rt_data$Block <- plyr::revalue(psi_rt_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
 
 # Set up regression equation with random slopes for trialtypes and intercepts for each block, 
 # nested within each participant for each dependent variable
@@ -44,5 +44,5 @@ summary(RT_lmm)
 Errors_lmm <- lmer(Errors ~ trialtype + Block + (1 | Subject/Block), data = errors_data, REML = TRUE)
 summary(Errors_lmm)
 
-PSI_RT_lmm <- lmer(PSI ~ Block + (1 | Subject/Block), data = psi_rt_data, REML = TRUE)
+PSI_RT_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_rt_data, REML = TRUE)
 summary(PSI_RT_lmm)
