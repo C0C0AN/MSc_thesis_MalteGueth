@@ -6,7 +6,7 @@
 # Get some basic descriptive and inferential statistics
 
 # This section on reading data and creating tables, starting at this point has been written by Jos?? Alanis
-# for usage in the section of neuropsychology
+# for usage in the section of neuropsychology (https://github.com/JoseAlanis)
 #############################################
 
 setwd('/Volumes/INTENSO/DPX_EEG_fMRI/Behavioral_Data/')
