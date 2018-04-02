@@ -1,0 +1,48 @@
+#####
+##### Code snippets for linear mixed effects regression as reported in the thesis paper
+##### 
+
+# Read in tables for RT, PSI and error data as processed in 'behavioral_descriptives_inferential.R'
+
+require(lme4)
+
+# Read in RT data and arrange it
+setwd('/Volumes/INTENSO/DPX_EEG_fMRI/Behavioral_Data/Rtables/')
+rt_data <- read.table('rt_corrects_single_trial.txt', header=T)
+rt_data <- dplyr::select(rt_data, Subject, Block, trialtype, RT)
+rt_data$trialtype <- as.factor(rt_data$trialtype)
+rt_data$Block <- as.factor(rt_data$Block)
+
+# Recode data so that block and trialtype have the range 0 to 3 for coding trialtypes for contrasts
+rt_data$trialtype <- plyr::revalue(rt_data$trialtype, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+rt_data$Block <- plyr::revalue(rt_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+
+# Read in error data and arrange it
+errors_data <- read.table('incorrects_average.txt', header=T)
+errors_data <- dplyr::select(errors_data, Subject, Block, trialtype, Errors)
+errors_data$trialtype <- as.factor(errors_data$trialtype)
+errors_data$Block <- as.factor(errors_data$Block)
+
+# Recode data so that block and trialtype have the range 0 to 3 for coding trialtypes for contrasts
+errors_data$trialtype <- plyr::revalue(errors_data$trialtype, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+errors_data$Block <- plyr::revalue(errors_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+
+# Read in PSI data and arrange it
+psi_rt_data <- read.table('PSI_RT_blocks.txt', header=T)
+psi_rt_data <- dplyr::select(psi_data, Subject, Block, PSI)
+psi_rt_data$Block <- as.factor(psi_data$Block)
+
+# Recode data so that block has the range 0 to 3 for coding trialtypes for contrasts
+psi_rt_data$Block <- plyr::revalue(psi_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+
+# Set up regression equation with random slopes for trialtypes and intercepts for each block, 
+# nested within each participant for each dependent variable
+
+RT_lmm <- lmer(RT ~ trialtype + Block + (1 | Subject/Block), data = rt_data, REML = TRUE)
+summary(RT_lmm)
+
+Errors_lmm <- lmer(Errors ~ trialtype + Block + (1 | Subject/Block), data = errors_data, REML = TRUE)
+summary(Errors_lmm)
+
+PSI_RT_lmm <- lmer(PSI ~ Block + (1 | Subject/Block), data = psi_rt_data, REML = TRUE)
+summary(PSI_RT_lmm)
