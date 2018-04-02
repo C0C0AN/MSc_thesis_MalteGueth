@@ -251,9 +251,9 @@ write.table(PSI_RT_blocks_subs, './Rtables/PSI_RT_blocks.txt', row.names = F, se
 # Errors and ER
 write.table(incorrects_average, './Rtables/incorrects_average.txt', row.names = F, sep = '\t')
 write.table(incorrects_average_blocks, './Rtables/incorrects_average_blocks.txt', row.names = F, sep = '\t')
-write.table(PSI_ER_blocks, './Rtables/PSI_ER_blocks', row.names = F, sep = '\t')
-write.table(PSI_ER_blocks_subs, './Rtables/PSI_ER_blocks_subs', row.names = F, sep = '\t')
+write.table(PSI_ER_blocks, './Rtables/PSI_ER_blocks.txt', row.names = F, sep = '\t')
+write.table(PSI_ER_blocks_subs, './Rtables/PSI_ER_blocks_subs.txt', row.names = F, sep = '\t')
 
 write.table(incorrects_average_blocks_errors, './Rtables/incorrects_average_blocks_errors.txt', row.names = F, sep = '\t')
-write.table(PSI_Errors_blocks, './Rtables/PSI_Errors_blocks', row.names = F, sep = '\t')
-write.table(PSI_Errors_blocks_subs, './Rtables/PSI_Errors_blocks_subs', row.names = F, sep = '\t')
+write.table(PSI_Errors_blocks, './Rtables/PSI_Errors_blocks.txt', row.names = F, sep = '\t')
+write.table(PSI_Errors_blocks_subs, './Rtables/PSI_Errors_blocks_subs.txt', row.names = F, sep = '\t')
