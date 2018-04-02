@@ -5,7 +5,7 @@
 # Read in reaction times and reaction types by block, trial and trialtype ('rawdata.txt')
 # Get some basic descriptive and inferential statistics
 
-# This section on reading data and creating tables, starting at this point has been written by Jos?? Alanis
+# This section on reading data and creating tables, starting at this point has been written by Jose Alanis
 # for usage in the section of neuropsychology (https://github.com/JoseAlanis)
 #############################################
 
@@ -194,12 +194,16 @@ ggplot(rt_corrects_average_blocks, aes(x = Block, y = Mean_RT, fill = trialtype)
   labs(x = "block", y = "reaction times [ms]") +
   theme_classic()
 
+ggsave('./Rplots/rt_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.83) 
+
 ggplot(PSI_RT_blocks, aes(x = Block, y = Mean_PSI)) + 
   geom_bar(position = position_dodge(), stat = 'identity', fill="steelblue") +
   geom_errorbar(aes(ymin=Mean_PSI-se, ymax=Mean_PSI+se), width=.2, position = position_dodge(.9)) +
   coord_cartesian(ylim = c(0.1, 0.25)) +
   labs(x = "block", y = "proactive behavioral shift index (PSI) for reaction times") +
   theme_classic()
+
+ggsave('./Rplots/psi_rt_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.83) 
 
 # Errors and PSI for errors
 
@@ -213,12 +217,16 @@ ggplot(incorrects_average_blocks_errors, aes(x = Block, y = Mean_Errors, fill = 
   labs(x = "block", y = "error counts (average amount of errors per block)") +
   theme_classic()
 
+ggsave('./Rplots/errors_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.83) 
+
 ggplot(PSI_Errors_blocks, aes(x = Block, y = Mean_PSI)) + 
   geom_bar(position = position_dodge(), stat = 'identity', fill="steelblue") +
   geom_errorbar(aes(ymin=Mean_PSI-se, ymax=Mean_PSI+se), width=.2, position = position_dodge(.9)) +
   coord_cartesian(ylim = c(0.01, 0.7)) +
   labs(x = "block", y = "proactive behavioral shift index (PSI) for errors") +
   theme_classic()
+
+ggsave('./Rplots/psi_errors_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.83) 
 
 # ER and PSI for ER
 
@@ -232,12 +240,16 @@ ggplot(incorrects_average_blocks, aes(x = Block, y = Mean_ER, fill = trialtype),
   labs(x = "block", y = "error rates (average amount of errors per block)") +
   theme_classic()
 
+ggsave('./Rplots/er_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.83) 
+
 ggplot(PSI_ER_blocks, aes(x = Block, y = Mean_PSI)) + 
   geom_bar(position = position_dodge(), stat = 'identity', fill="steelblue") +
   geom_errorbar(aes(ymin=Mean_PSI-se, ymax=Mean_PSI+se), width=.2, position = position_dodge(.9)) +
   coord_cartesian(ylim = c(0.01, 0.7)) +
   labs(x = "block", y = "proactive behavioral shift index (PSI) for error rates") +
   theme_classic()
+
+ggsave('./Rplots/psi_er_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.83) 
 
 # Write and save tables for later analyses
 
