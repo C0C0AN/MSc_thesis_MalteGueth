@@ -24,3 +24,4 @@ the ones in python. However, having them in multiple languages eases many tasks 
 - I finished the results section on the behavioral part and added more basic parts of electrophysiological and neuroimaging data
 - Based on the results reported, I added more text to my discussion (summary of basic results and conclusions drawn)
 - To prepare for preregistration, I collected possible journals for future publication
+- For better overview, I re-structured parts of my GitHub repo (e.g., new folder purely for experiment description and setup information
