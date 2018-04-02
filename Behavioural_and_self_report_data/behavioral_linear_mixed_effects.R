@@ -27,13 +27,39 @@ errors_data$Block <- as.factor(errors_data$Block)
 errors_data$trialtype <- plyr::revalue(errors_data$trialtype, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
 errors_data$Block <- plyr::revalue(errors_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
 
-# Read in PSI data and arrange it
+# Read in ER data and arrange it
+er_data <- read.table('incorrects_average.txt', header=T)
+er_data <- dplyr::select(er_data, Subject, Block, trialtype, ER)
+er_data$trialtype <- as.factor(er_data$trialtype)
+er_data$Block <- as.factor(er_data$Block)
+
+# Recode data so that block and trialtype have the range 0 to 3 for coding trialtypes for contrasts
+er_data$trialtype <- plyr::revalue(er_data$trialtype, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+er_data$Block <- plyr::revalue(er_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+
+# Read in PSI for RT data and arrange it
 psi_rt_data <- read.table('PSI_RT_blocks.txt', header=T)
 psi_rt_data <- dplyr::select(psi_data, Subject, Block, PSI)
 psi_rt_data$Block <- as.factor(psi_data$Block)
 
 # Recode data so that block has the range 0 to 3 for coding trialtypes for contrasts
 psi_rt_data$Block <- plyr::revalue(psi_rt_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+
+# Read in PSI for errors and arrange it
+psi_errors_data <- read.table('PSI_Errors_blocks_subs.txt', header=T)
+psi_errors_data <- dplyr::select(psi_errors_data, Subject, Block, PSI)
+psi_errors_data$Block <- as.factor(psi_errors_data$Block)
+
+# Recode data so that block has the range 0 to 3 for coding trialtypes for contrasts
+psi_errors_data$Block <- plyr::revalue(psi_errors_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+
+# Read in PSI for ER data and arrange it
+psi_er_data <- read.table('PSI_ER_blocks_subs.txt', header=T)
+psi_er_data <- dplyr::select(psi_er_data, Subject, Block, PSI)
+psi_er_data$Block <- as.factor(psi_er_data$Block)
+
+# Recode data so that block has the range 0 to 3 for coding trialtypes for contrasts
+psi_er_data$Block <- plyr::revalue(psi_er_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
 
 # Set up regression equation with random slopes for trialtypes and intercepts for each block, 
 # nested within each participant for each dependent variable
@@ -46,3 +72,9 @@ summary(Errors_lmm)
 
 PSI_RT_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_rt_data, REML = TRUE)
 summary(PSI_RT_lmm)
+
+PSI_Errors_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_errors_data, REML = TRUE)
+summary(PSI_Errors_lmm)
+
+PSI_ER_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_er_data, REML = TRUE)
+summary(PSI_ER_lmm)
