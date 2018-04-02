@@ -17,3 +17,11 @@ the ones in python. However, having them in multiple languages eases many tasks 
 - After doing more research and re-writing my entire pre-processing section, I did not change my approach, but think I reported in a convincing way and found appropriate sources
 - I created new plots to illustrate my artefact score approach for rejecting ballistocardiac artefacts, refined the code and uploaded it
 - Again, I updated my thesis paper
+
+4th week
+- To finish up all reports on behavioral data (reaction times, error rates, total error counts and corresponding proactive behavioral shift index) I completed all basic and advanced (linear mixed model effects regression) analyses and uploaded the necessary R code
+- The code scripts included pre-processed data frames ready for different analyses, descriptives plots for the master thesis paper, basic inferential tests (i.e., ANOVA) and model equations for LMM regression
+- I finished the results section on the behavioral part and added more basic parts of electrophysiological and neuroimaging data
+- Based on the results reported, I added more text to my discussion (summary of basic results and conclusions drawn)
+- To prepare for preregistration, I collected possible journals for future publication
+- For better overview, I re-structured parts of my GitHub repo (e.g., new folder purely for experiment description and setup information
