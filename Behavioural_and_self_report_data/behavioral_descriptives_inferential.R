@@ -62,6 +62,10 @@ rt_corrects_average_blocks <- plyr::ddply(rt_corrects, c('Block', 'trialtype'), 
 
 require(tidyr)
 
+PSI_RT <- dplyr::filter(rt_corrects, trialtype %in% c(2, 3))
+PSI_RT <- dplyr::select(PSI_RT, Subject, Block, trialtype, RT)
+PSI_RT <- spread(PSI_RT, trialtype, RT, drop = TRUE)
+
 PSI_RT_blocks_subs <- dplyr::filter(rt_corrects_average_subs, trialtype %in% c(2, 3))
 PSI_RT_blocks_subs <- dplyr::select(PSI_RT_blocks_subs, Subject, Block, trialtype, Mean_RT)
 PSI_RT_blocks_subs <- spread(PSI_RT_blocks_subs, trialtype, Mean_RT, drop = TRUE)
@@ -254,6 +258,7 @@ ggsave('./Rplots/psi_er_bar_graph.pdf', plot=last_plot(), width=7.85, height=5.8
 # Write and save tables for later analyses
 
 # RT
+write.table(rt_corrects, './Rtables/rt_corrects_single_trial.txt', row.names = F, sep = '\t')
 write.table(rt_corrects_average, './Rtables/rt_corrects_average.txt', row.names = F, sep = '\t')
 write.table(rt_corrects_average_subs, './Rtables/rt_corrects_average_subs.txt', row.names = F, sep = '\t')
 write.table(rt_corrects_average_blocks, './Rtables/rt_corrects_average_blocks.txt', row.names = F, sep = '\t')
