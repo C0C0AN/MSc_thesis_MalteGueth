@@ -78,9 +78,9 @@ df13 = epochs13.to_data_frame(picks=None, scalings=None, scaling_time=scaling_ti
 
 df_all2 = pd.concat([df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13])
 
-df_all2['subject'] = np.r_[np.ones(len(df1)), np.ones(len(df2)) + 1, np.ones(len(df3)) + 1,
-      np.ones(len(df4)) + 1, np.ones(len(df5)) + 1, np.ones(len(df6)) + 1, np.ones(len(df7)) + 1,
-      np.ones(len(df8)) + 1, np.ones(len(df9)) + 1, np.ones(len(df10)) + 1, np.ones(len(df11)) + 1,
-      np.ones(len(df12)) + 1, np.ones(len(df13)) + 1]
+df_all['subject'] = np.r_[np.ones(len(df1)), np.ones(len(df2)) + 1, np.ones(len(df3)) + 2,
+      np.ones(len(df4)) + 3, np.ones(len(df5)) + 4, np.ones(len(df6)) + 5, np.ones(len(df7)) + 6,
+      np.ones(len(df8)) + 7, np.ones(len(df9)) + 8, np.ones(len(df10)) + 9, np.ones(len(df11)) + 10,
+      np.ones(len(df12)) + 11, np.ones(len(df13)) + 12]
 
 df_all2.to_csv('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/MNE/epochs/eeg_epochs.csv')
