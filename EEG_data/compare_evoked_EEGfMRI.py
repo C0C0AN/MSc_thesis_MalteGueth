@@ -63,7 +63,7 @@ linestyles2 = dict(AX='-', BX='--',
 picks1 = chanlabels.index('Pz')
 picks2 = chanlabels.index('Fz')
 
-evoked_dict1 = {'CueA': lisA,'CueB': listB}
+evoked_dict1 = {'CueA': listA,'CueB': listB}
 evoked_dict2 = {'AX': listAX, 'BX': listBX, 'AY': listAY, 'BY': listBY}
 
 vlines = list([0])
