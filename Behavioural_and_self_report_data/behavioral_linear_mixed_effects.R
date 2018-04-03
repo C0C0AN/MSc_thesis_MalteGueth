@@ -66,15 +66,20 @@ psi_er_data$Block <- plyr::revalue(psi_er_data$Block, c('1' = 0, '2' = 1, '3' = 
 
 RT_lmm <- lmer(RT ~ trialtype + Block + (1 | Subject/Block), data = rt_data, REML = TRUE)
 summary(RT_lmm)
+Anova(RT_lmm)
 
 Errors_lmm <- lmer(Errors ~ trialtype + Block + (1 | Subject/Block), data = errors_data, REML = TRUE)
 summary(Errors_lmm)
+Anova(Errors_lmm)
 
 PSI_RT_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_rt_data, REML = TRUE)
 summary(PSI_RT_lmm)
+Anova(PSI_RT_lmm)
 
 PSI_Errors_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_errors_data, REML = TRUE)
 summary(PSI_Errors_lmm)
+Anova(PSI_Errors_lmm)
 
 PSI_ER_lmm <- lmer(PSI ~ Block + (1 | Subject), data = psi_er_data, REML = TRUE)
 summary(PSI_ER_lmm)
+Anova(PSI_ER_lmm)
