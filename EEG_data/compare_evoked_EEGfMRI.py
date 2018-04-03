@@ -60,8 +60,8 @@ linestyles1 = dict(CueA='-', CueB='--')
 linestyles2 = dict(AX='-', BX='--',
                    AY='-', BY='--')
 
-picks1 = ch_names.index('Pz')
-picks2 = ch_names.index('Fz')
+picks1 = chanlabels.index('Pz')
+picks2 = chanlabels.index('Fz')
 
 evoked_dict1 = {'CueA': lisA,'CueB': listB}
 evoked_dict2 = {'AX': listAX, 'BX': listBX, 'AY': listAY, 'BY': listBY}
