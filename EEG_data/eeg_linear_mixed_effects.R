@@ -20,12 +20,6 @@ eeg_data$condition <- plyr::revalue(eeg_data$condition,
                                       'B6(S79)' = 2, 'B6(S80)' = 2, 'B6(S81)' = 2, 'B6(S82)' = 2,
                                       'B6(S83)' = 2))
 
-#eeg_data$epoch <- eeg_data$epoch - 1
-#eeg_data$subject <- plyr::revalue(eeg_data$subject, c('1' = 0, '2' = 1, '3' = 2, '4' = 3,
-#                                                      '5' = 4, '6' = 5, '7' = 6, '8' = 7,
-#                                                      '9' = 8, '10' = 9, '11' = 10, '12' = 11,
-#                                                      '13' = 12))
-
 eeg_data$condition <- as.factor(eeg_data$condition)
 eeg_data$subject <- as.factor(eeg_data$subject)
 eeg_data$epoch <- as.factor(eeg_data$epoch)
