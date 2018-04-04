@@ -1,4 +1,4 @@
-Dot Pattern Expectancy Task
+# Dot Pattern Expectancy Task
 Each block consisted of 52 trials with four different trialtypes (AX, BX, AY, BY). Blocks were separated by one minute breaks 
 and preceded by 18 practice trials. One trial consisted of two stimulus types. Stimuli consisted of dot patterns highlighted 
 within a square of nine equidistant, blue dots. The first dot pattern (i.e. the cue) was presented in light blue for 100 ms 
@@ -17,5 +17,5 @@ Across the four blocks 208 trials were presented with 136 AX (65%) and 24 trials
 However, due to an error in the programming (see ‘Stimulist.pcl’) the fourth block consisted of 33 AX and 7 BX trials. 
 Therefore, the actual amount is 135 AX, 25 BX and 24 AY and BY trials.
 
-EPI sequence parameters
+# EPI sequence parameters
 TR: 1800 ms, TE: 30 ms, Flip Angle: 75°, Matrix size 64 x 64, 32 slices, 3 x 3 x 4.6 mm voxel, T1-weighted structural images
