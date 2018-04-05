@@ -36,11 +36,13 @@ for x in range(1, 14):
     # save the data as fif and as a pandas DataFrame
     epochs = mne.Epochs(raw, events, event_id=event_id, tmin=-0.2, tmax=1.0)
     epochs.save(output_dir)
-    df
     
-    # Average epoched data over conditions
+    # Apply baseline correction and average epoched data over conditions
     evoked_cueA = epochs['A'].average()
+    evoked_cueA.apply_baseline(-0.25, 0)
     evoked_cueB = epochs['B'].average()
+    evoked_cueB.apply_baseline(-0.25, 0)
+
     
 
 # Preprare single trial data for higher level analyses in Python as well as for importing data to R
