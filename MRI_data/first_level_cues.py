@@ -169,11 +169,11 @@ l1analysis.run('MultiProc', plugin_args={'n_procs': 4})
 anatimg = '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/structural/VP13/structural.nii'
 
 ABase = plot_stat_map(
-    '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/1stLevel/sub13/fwhm-5/spmT_01.nii', title='CueA', dim=1,
+    '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/1stLevel/sub13/fwhm-5/spmT_0001.nii', title='CueA', dim=1,
     bg_img=anatimg, threshold=2, vmax=8, display_mode='z', cut_coords=(55, 0, -5, -10), cmap='magma');
 AB = plot_stat_map(
-    '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/1stLevel/sub13/fwhm-5/spmT_04.nii', title='CueA>CueB', dim=1,
+    '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/1stLevel/sub13/fwhm-5/spmT_0004.nii', title='CueA>CueB', dim=1,
     bg_img=anatimg, threshold=2, vmax=8, display_mode='y', cut_coords=(55, 35, 15), cmap='magma');
 glassA = plot_glass_brain(
-    '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/1stLevel/sub13/fwhm-5/spmT_04.nii', colorbar=True,
+    '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/1stLevel/sub13/fwhm-5/spmT_0004.nii', colorbar=True,
     threshold=2, display_mode='lyrz', black_bg=True, vmax=8, title='CueA');
