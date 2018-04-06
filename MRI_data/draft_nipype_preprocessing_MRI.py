@@ -4,7 +4,7 @@ Created on Wed Dec 02 10:10:36 2017
 @author: Malte
 """
 
-# Basic MRI preprocessing workflow following nipype tutorials 
+# Basic MRI preprocessing workflow based on example provided by nipype tutorials 
 # (https://miykael.github.io/nipype_tutorial/notebooks/example_preprocessing.html)
 
 from os.path import join as opj
@@ -18,9 +18,9 @@ from nipype.interfaces.io import SelectFiles, DataSink
 from nipype.algorithms.rapidart import ArtifactDetect
 from nipype.pipeline.engine import Workflow, Node
 
-experiment_dir = '/output'
-output_dir = '/data'
-working_dir = '/workingdir'
+experiment_dir = '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output'
+output_dir = '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/data'
+working_dir = '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/workingdir'
 
 # list of subject identifiers
 subject_list = ['sub01', 'sub02', 'sub03', 'sub04', 'sub05',
@@ -30,8 +30,8 @@ subject_list = ['sub01', 'sub02', 'sub03', 'sub04', 'sub05',
 # list of session identifiers
 task_list = ['dpx']
 
-# Smoothing widths to apply
-fwhm = [4, 8]
+# Smoothing width to apply
+fwhm = 5
 
 # TR of functional images
 with open('/data/dpx_bold.json', 'rt') as fp:
@@ -40,8 +40,6 @@ TR = task_info['RepetitionTime']
 
 # Isometric resample of functional images to voxel size (in mm)
 iso_size = 4
-
-
 
 # ExtractROI - skip dummy scans
 extract = Node(ExtractROI(t_min=4, t_size=-1),
@@ -56,7 +54,7 @@ mcflirt = Node(MCFLIRT(mean_vol=True,
 
 # SliceTimer - correct for slice wise acquisition
 slicetimer = Node(SliceTimer(index_dir=False,
-                             interleaved=True,
+                             interleaved=False,
                              output_type='NIFTI',
                              time_repetition=TR),
                   name="slicetimer")
