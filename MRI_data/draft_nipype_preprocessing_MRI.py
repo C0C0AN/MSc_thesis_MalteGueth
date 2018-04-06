@@ -34,8 +34,8 @@ task_list = ['dpx']
 fwhm = 5
 
 # TR of functional images
-with open('/data/dpx_bold.json', 'rt') as fp:
-    task_info = json.load(fp)
+with open('/data/dpx_bold.json', 'rt') as dpx:
+    task_info = json.load(dpx)
 TR = task_info['RepetitionTime']
 
 # Isometric resample of functional images to voxel size (in mm)
