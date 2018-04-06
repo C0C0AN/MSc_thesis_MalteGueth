@@ -4,7 +4,9 @@ Created on Sat Mar  17 09:15:16 2018
 @author: Malte Gueth
 """
 
-# Plot second anf irst level fMRI data
+# First level analysis for fMRI data (only accounting for cue-related activations) based on examples provided in
+# nipype tutorials (https://miykael.github.io/nipype_tutorial/notebooks/example_1stlevel.html#Specify-GLM-Model)
+
 from os.path import join as opj
 import json
 from nipype.interfaces.spm import Level1Design, EstimateModel, EstimateContrast
