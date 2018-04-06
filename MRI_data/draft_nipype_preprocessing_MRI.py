@@ -4,7 +4,7 @@ Created on Wed Dec 02 10:10:36 2017
 @author: Malte
 """
 
-# Basic MRI preprocessing workflow following nipype tutorials 
+# Basic MRI preprocessing workflow based on examples provided by nipype tutorials 
 # (https://miykael.github.io/nipype_tutorial/notebooks/example_preprocessing.html)
 
 from os.path import join as opj
