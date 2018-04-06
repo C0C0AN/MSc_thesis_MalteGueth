@@ -116,7 +116,7 @@ selectfiles = Node(SelectFiles(templates,
                                base_directory=experiment_dir,
                                sort_filelist=True),
                    name="selectfiles")
-selectfiles.inputs.task_id = 'fingerfootlips'
+selectfiles.inputs.task_id = 'dpx'
 
 # Datasink - creates output folder for important outputs
 datasink = Node(DataSink(base_directory=experiment_dir,
@@ -158,9 +158,7 @@ l1analysis.connect([(infosource, selectfiles, [('subject_id', 'subject_id'),
                                                      'residual_image')]),
                     (level1conest, datasink, [('spm_mat_file', '1stLevel.@spm_mat'),
                                               ('spmT_images', '1stLevel.@T'),
-                                              ('con_images', '1stLevel.@con'),
-                                              ('spmF_images', '1stLevel.@F'),
-                                              ('ess_images', '1stLevel.@ess'),
+                                              ('con_images', '1stLevel.@con')
                                               ]),
                     ])
              
