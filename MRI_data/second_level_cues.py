@@ -121,14 +121,18 @@ l2analysis.run('MultiProc', plugin_args={'n_procs': 4})
 
 anatimg = '/usr/local/fsl/data/standard/MNI152_T1_1mm.nii.gz'
 
-ABase = plot_stat_map(
+AB1 = plot_stat_map(
     '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/2ndLevel/spm_con_0001_fwhm5/spmT_0001_thr.nii', 
-    title='CueA', dim=1, bg_img=anatimg, threshold=2, vmax=8, display_mode='z', 
-    cut_coords=(55, 0, -5), cmap='magma');
-AB = plot_stat_map(
+    title='A>B', dim=1, bg_img=anatimg, threshold=2, vmax=6, display_mode='z', 
+    cut_coords=(10, 5, 0, -3), cmap='magma');
+AB2 = plot_stat_map(
     '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/2ndLevel/spm_con_0004_fwhm5/spmT_0004_thr.nii', 
-    title='CueA>CueB', dim=1, bg_img=anatimg, threshold=2, vmax=8, display_mode='y', 
-    cut_coords=(40, 35, 15), cmap='magma');
-glassA = plot_glass_brain(
+    title='A>B', dim=1, bg_img=anatimg, threshold=2, vmax=6, display_mode='y', 
+    cut_coords=(35, 31, 25), cmap='magma');
+glassAB = plot_glass_brain(
     '/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/output/datasink/2ndLevel/spm_con_0004_fwhm5/spmT_0004_thr.nii',
-    colorbar=True, threshold=2, display_mode='lyrz', black_bg=True, vmax=8, title='CueA>CueB');
+    colorbar=True, threshold=2, display_mode='lyrz', black_bg=True, vmax=6, title='A>B');
+
+AB1.savefig('/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/L2_AB_axial.pdf')
+AB2.savefig('/Volumes/INTENSO/DPX_EEG_fMRI/fMRI/L2_AB_coronal.pdf')
+glassAB.savefig('/Volumes/INTENSO/DPX_EEG_fMRI/L2_AB_glass.pdf')
