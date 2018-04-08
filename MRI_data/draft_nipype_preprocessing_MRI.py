@@ -4,7 +4,7 @@ Created on Wed Dec 02 10:10:36 2017
 @author: Malte
 """
 
-# Basic MRI preprocessing workflow based on example provided by nipype tutorials 
+# Basic MRI preprocessing workflow based on examples provided by nipype tutorials 
 # (https://miykael.github.io/nipype_tutorial/notebooks/example_preprocessing.html)
 
 from os.path import join as opj
@@ -34,8 +34,8 @@ task_list = ['dpx']
 fwhm = 5
 
 # TR of functional images
-with open('/data/dpx_bold.json', 'rt') as fp:
-    task_info = json.load(fp)
+with open('/data/dpx_bold.json', 'rt') as dpx:
+    task_info = json.load(dpx)
 TR = task_info['RepetitionTime']
 
 # Isometric resample of functional images to voxel size (in mm)
