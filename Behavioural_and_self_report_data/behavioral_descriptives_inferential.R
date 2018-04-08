@@ -9,47 +9,50 @@
 # for usage in the section of neuropsychology (https://github.com/JoseAlanis)
 #############################################
 
+require(plyr)
+require(dplyr)
+
 setwd('/Volumes/INTENSO/DPX_EEG_fMRI/Behavioral_Data/')
 
 paths <- dir('/Volumes/INTENSO/DPX_EEG_fMRI/Behavioral_Data/rawdata/', full.names = T)
 names(paths) <- basename(paths)
 
-rt_data <- plyr::ldply(paths, read.table, header = F, sep =',')
+rt_data <- ldply(paths, read.table, header = F, sep =',')
 
-rt_data <- dplyr::rename(rt_data, 
-                         ID = .id, 
-                         Block = V2, 
-                         Trial = V4, 
-                         trialtype = V6, 
-                         RT = V10, 
-                         Reaction = V12)
+rt_data <- rename(rt_data, 
+                   ID = .id, 
+                   Block = V2, 
+                   Trial = V4, 
+                   trialtype = V6, 
+                   RT = V10, 
+                   Reaction = V12)
 
-rt_data <- dplyr::select(rt_data, ID, Block, Trial, trialtype, Reaction, RT)
+rt_data <- select(rt_data, ID, Block, Trial, trialtype, Reaction, RT)
 
 rt_data$ID <- as.factor(rt_data$ID)
-rt_data <- dplyr::arrange(rt_data, ID)
+rt_data <- arrange(rt_data, ID)
 rt_data$Subject <- rep(1:13, each=208)
 rt_data$Subject <- as.factor(rt_data$Subject)
 
-rt_data$Reaction <- plyr::revalue(rt_data$Reaction, c(' hit' = 'correct', ' incorrect'='incorrect', ' miss'='too slow'))
-rt_corrects <- dplyr::filter(rt_data, Reaction == 'correct')
+rt_data$Reaction <- revalue(rt_data$Reaction, c(' hit' = 'correct', ' incorrect'='incorrect', ' miss'='too slow'))
+rt_corrects <- filter(rt_data, Reaction == 'correct')
 rt_corrects$trialtype <- as.factor(rt_corrects$trialtype)
 
-rt_corrects_average <- plyr::ddply(rt_corrects, c('trialtype'), dplyr::summarise,
-                                   Sum    = sum(!is.na(RT)),
-                                   Mean_RT = mean(RT),
-                                   sd   = sd(RT),
-                                   se   = sd / sqrt(Sum),
-                                   ci   = se * qt(.95/2 + .5, Sum-1))
+rt_corrects_average <- ddply(rt_corrects, c('trialtype'), summarise,
+                             Sum    = sum(!is.na(RT)),
+                             Mean_RT = mean(RT),
+                             sd   = sd(RT),
+                             se   = sd / sqrt(Sum),
+                             ci   = se * qt(.95/2 + .5, Sum-1))
 
-rt_corrects_average_subs <- plyr::ddply(rt_corrects, c('Subject', 'Block', 'trialtype'), dplyr::summarise,
-                                          Sum    = sum(!is.na(RT)),
-                                          Mean_RT = mean(RT),
-                                          sd   = sd(RT),
-                                          se   = sd / sqrt(Sum),
-                                          ci   = se * qt(.95/2 + .5, Sum-1))
+rt_corrects_average_subs <- ddply(rt_corrects, c('Subject', 'Block', 'trialtype'), summarise,
+                                  Sum    = sum(!is.na(RT)),
+                                  Mean_RT = mean(RT),
+                                  sd   = sd(RT),
+                                  se   = sd / sqrt(Sum),
+                                  ci   = se * qt(.95/2 + .5, Sum-1))
 
-rt_corrects_average_blocks <- plyr::ddply(rt_corrects, c('Block', 'trialtype'), dplyr::summarise,
+rt_corrects_average_blocks <- ddply(rt_corrects, c('Block', 'trialtype'), summarise,
                                     Sum    = sum(!is.na(RT)),
                                     Mean_RT = mean(RT),
                                     sd   = sd(RT),
@@ -62,33 +65,33 @@ rt_corrects_average_blocks <- plyr::ddply(rt_corrects, c('Block', 'trialtype'), 
 
 require(tidyr)
 
-PSI_RT <- dplyr::filter(rt_corrects, trialtype %in% c(2, 3))
-PSI_RT <- dplyr::select(PSI_RT, Subject, Block, trialtype, RT)
+PSI_RT <- filter(rt_corrects, trialtype %in% c(2, 3))
+PSI_RT <- select(PSI_RT, Subject, Block, trialtype, RT)
 PSI_RT <- spread(PSI_RT, trialtype, RT, drop = TRUE)
 
-PSI_RT_blocks_subs <- dplyr::filter(rt_corrects_average_subs, trialtype %in% c(2, 3))
-PSI_RT_blocks_subs <- dplyr::select(PSI_RT_blocks_subs, Subject, Block, trialtype, Mean_RT)
+PSI_RT_blocks_subs <- filter(rt_corrects_average_subs, trialtype %in% c(2, 3))
+PSI_RT_blocks_subs <- select(PSI_RT_blocks_subs, Subject, Block, trialtype, Mean_RT)
 PSI_RT_blocks_subs <- spread(PSI_RT_blocks_subs, trialtype, Mean_RT, drop = TRUE)
-PSI_RT_blocks_subs <- dplyr::rename(PSI_RT_blocks_subs, RT_BX = '2', RT_AY = '3')
+PSI_RT_blocks_subs <- rename(PSI_RT_blocks_subs, RT_BX = '2', RT_AY = '3')
 
 PSI_RT_blocks_subs$PSI <- (PSI_RT_blocks_subs$RT_AY - PSI_RT_blocks_subs$RT_BX)/
                                  (PSI_RT_blocks_subs$RT_AY + PSI_RT_blocks_subs$RT_BX)
 
-PSI_RT_blocks <- plyr::ddply(PSI_blocks_subs, c('Block'), dplyr::summarise,
-                                          Subs    = sum(!is.na(PSI)),
-                                          Mean_PSI = mean(PSI),
-                                          sd   = sd(PSI),
-                                          se   = sd / sqrt(Subs),
-                                          ci   = se * qt(.95/2 + .5, Subs-1))
+PSI_RT_blocks <- ddply(PSI_blocks_subs, c('Block'), summarise,
+                       Subs    = sum(!is.na(PSI)),
+                       Mean_PSI = mean(PSI),
+                       sd   = sd(PSI),
+                       se   = sd / sqrt(Subs),
+                       ci   = se * qt(.95/2 + .5, Subs-1))
 
 # Build new data frame for errors and error rates by block and trialtype
 # Each ER is calculated by dividing the error count by its respective frequency per block (AX = 34; BX, AY, BY = 6)
 
-incorrects <- dplyr::select(rt_data, Subject, Block, trialtype, Reaction)
-incorrects$Reaction <- plyr::revalue(rt_data$Reaction, c('correct' = 0, 'incorrect'= 1, 'too slow'= 0))
+incorrects <- select(rt_data, Subject, Block, trialtype, Reaction)
+incorrects$Reaction <- revalue(rt_data$Reaction, c('correct' = 0, 'incorrect'= 1, 'too slow'= 0))
 
-incorrects_average <- plyr::ddply(incorrects, c('Subject', 'Block', 'trialtype'), dplyr::summarise,
-                                         Errors    = sum(Reaction == 1))
+incorrects_average <- ddply(incorrects, c('Subject', 'Block', 'trialtype'), summarise,
+                            Errors    = sum(Reaction == 1))
 
 # Implement the correction formula put forth by Braver et al. (2009) for errors per trialtype and block 
 # equaling zero to ease further calculations (so there is no need to work with zero values)
@@ -104,19 +107,19 @@ incorrects_average$ER <- ifelse(incorrects_average$trialtype == 1, (incorrects_a
                                 ifelse(incorrects_average$trialtype >= 2, (incorrects_average$Errors/6),
                                        incorrects_average$Errors))
 
-incorrects_average_blocks_errors <- plyr::ddply(incorrects_average, c('Block', 'trialtype'), dplyr::summarise,
-                                         Subs    = sum(!is.na(Errors)),
-                                         Mean_Errors = mean(Errors),
-                                         sd   = sd(Errors),
-                                         se   = sd / sqrt(Subs),
-                                         ci   = se * qt(.95/2 + .5, Subs-1))
+incorrects_average_blocks_errors <- ddply(incorrects_average, c('Block', 'trialtype'), summarise,
+                                          Subs    = sum(!is.na(Errors)),
+                                          Mean_Errors = mean(Errors),
+                                          sd   = sd(Errors),
+                                          se   = sd / sqrt(Subs),
+                                          ci   = se * qt(.95/2 + .5, Subs-1))
 
-incorrects_average_blocks <- plyr::ddply(incorrects_average, c('Block', 'trialtype'), dplyr::summarise,
-                                         Subs    = sum(!is.na(ER)),
-                                         Mean_ER = mean(ER),
-                                         sd   = sd(ER),
-                                         se   = sd / sqrt(Subs),
-                                         ci   = se * qt(.95/2 + .5, Subs-1))
+incorrects_average_blocks <- ddply(incorrects_average, c('Block', 'trialtype'), summarise,
+                                   Subs    = sum(!is.na(ER)),
+                                   Mean_ER = mean(ER),
+                                   sd   = sd(ER),
+                                   se   = sd / sqrt(Subs),
+                                   ci   = se * qt(.95/2 + .5, Subs-1))
 
 incorrects_average_blocks_errors$trialtype <- as.factor(incorrects_average_blocks_errors$trialtype)
 incorrects_average_blocks$trialtype <- as.factor(incorrects_average_blocks$trialtype)
@@ -131,30 +134,29 @@ PSI_Errors_blocks_subs <- dplyr::rename(PSI_Errors_blocks_subs, Errors_BX = '2',
 PSI_Errors_blocks_subs$PSI <- (PSI_Errors_blocks_subs$Errors_AY - PSI_Errors_blocks_subs$Errors_BX)/
   (PSI_Errors_blocks_subs$Errors_AY + PSI_Errors_blocks_subs$Errors_BX)
 
-PSI_Errors_blocks <- plyr::ddply(PSI_Errors_blocks_subs, c('Block'), dplyr::summarise,
-                             Subs    = sum(!is.na(PSI)),
-                             Mean_PSI = mean(PSI),
-                             sd   = sd(PSI),
-                             se   = sd / sqrt(Subs),
-                             ci   = se * qt(.95/2 + .5, Subs-1))
+PSI_Errors_blocks <- ddply(PSI_Errors_blocks_subs, c('Block'), summarise,
+                           Subs    = sum(!is.na(PSI)),
+                           Mean_PSI = mean(PSI),
+                           sd   = sd(PSI),
+                           se   = sd / sqrt(Subs),
+                           ci   = se * qt(.95/2 + .5, Subs-1))
 
 # Lastly, also calculate the PSI but based on ER
 
-PSI_ER_blocks_subs <- dplyr::select(incorrects_average, Subject, Block, trialtype, ER)
-PSI_ER_blocks_subs <- dplyr::filter(PSI_ER_blocks_subs, trialtype %in% c(2, 3))
+PSI_ER_blocks_subs <- select(incorrects_average, Subject, Block, trialtype, ER)
+PSI_ER_blocks_subs <- filter(PSI_ER_blocks_subs, trialtype %in% c(2, 3))
 PSI_ER_blocks_subs <- spread(PSI_ER_blocks_subs, trialtype, ER, drop = TRUE)
-PSI_ER_blocks_subs <- dplyr::rename(PSI_ER_blocks_subs, ER_BX = '2', ER_AY = '3')
+PSI_ER_blocks_subs <- rename(PSI_ER_blocks_subs, ER_BX = '2', ER_AY = '3')
 
 PSI_ER_blocks_subs$PSI <- (PSI_ER_blocks_subs$ER_AY - PSI_ER_blocks_subs$ER_BX)/
   (PSI_ER_blocks_subs$ER_AY + PSI_ER_blocks_subs$ER_BX)
 
-PSI_ER_blocks <- plyr::ddply(PSI_ER_blocks_subs, c('Block'), dplyr::summarise,
-                          Subs    = sum(!is.na(PSI)),
-                          Mean_PSI = mean(PSI),
-                          sd   = sd(PSI),
-                          se   = sd / sqrt(Subs),
-                          ci   = se * qt(.95/2 + .5, Subs-1)
-)
+PSI_ER_blocks <- ddply(PSI_ER_blocks_subs, c('Block'), summarise,
+                       Subs    = sum(!is.na(PSI)),
+                       Mean_PSI = mean(PSI),
+                       sd   = sd(PSI),
+                       se   = sd / sqrt(Subs),
+                       ci   = se * qt(.95/2 + .5, Subs-1))
 
 # Formulate statistcial model equations and perform inferential tests with a general linear model
 # Factors are either trialtype and/or block, depending on if PSI, RT, error counts and ER are dependent variables
