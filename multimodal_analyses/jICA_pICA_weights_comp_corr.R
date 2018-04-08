@@ -1,5 +1,5 @@
 #####
-##### Code for plotting joint and parallel ICA EEG results
+##### Code for plotting joint and parallel ICA results
 #####
 
 # Read tables for EEG components, correlation coefficients, ICA weights and other data from ICA
