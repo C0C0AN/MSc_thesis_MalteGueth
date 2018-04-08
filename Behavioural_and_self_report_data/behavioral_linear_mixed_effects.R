@@ -5,11 +5,13 @@
 # Read in tables for RT, PSI and error data as processed in 'behavioral_descriptives_inferential.R'
 
 require(lme4)
+require(dplyr)
+require(plyr)
 
 # Read in RT data and arrange it
 setwd('/Volumes/INTENSO/DPX_EEG_fMRI/Behavioral_Data/Rtables/')
 rt_data <- read.table('rt_corrects_single_trial.txt', header=T)
-rt_data <- dplyr::select(rt_data, Subject, Block, trialtype, RT)
+rt_data <- select(rt_data, Subject, Block, trialtype, RT)
 rt_data$trialtype <- as.factor(rt_data$trialtype)
 rt_data$Block <- as.factor(rt_data$Block)
 
@@ -55,11 +57,11 @@ psi_errors_data$Block <- plyr::revalue(psi_errors_data$Block, c('1' = 0, '2' = 1
 
 # Read in PSI for ER data and arrange it
 psi_er_data <- read.table('PSI_ER_blocks_subs.txt', header=T)
-psi_er_data <- dplyr::select(psi_er_data, Subject, Block, PSI)
+psi_er_data <- select(psi_er_data, Subject, Block, PSI)
 psi_er_data$Block <- as.factor(psi_er_data$Block)
 
 # Recode data so that block has the range 0 to 3 for coding trialtypes for contrasts
-psi_er_data$Block <- plyr::revalue(psi_er_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
+psi_er_data$Block <- revalue(psi_er_data$Block, c('1' = 0, '2' = 1, '3' = 2, '4' = 3))
 
 # Set up regression equation with random slopes for trialtypes and intercepts for each block, 
 # nested within each participant for each dependent variable
