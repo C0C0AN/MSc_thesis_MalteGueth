@@ -26,9 +26,9 @@ eeg_data$condition <- as.factor(eeg_data$condition)
 eeg_data$subject <- as.factor(eeg_data$subject)
 eeg_data$epoch <- as.factor(eeg_data$epoch)
 
-# Pick only time points from roughly 250 ms to 1000 ms, since this interval contains the sustained positivity
+# Pick only time points from roughly 250 ms to 800 ms, since this interval contains the sustained positivity
 # Additionally, some more buffer time is included to account for regular signal fluctuation
-eeg_epochs <- eeg_data[ which(eeg_data$time >= 187.5 & eeg_data$time <= 250), ]
+eeg_epochs <- eeg_data[ which(eeg_data$time >= 187.5 & eeg_data$time <= 350), ]
 
 # Average across time points to receive one mean amplitude at pz per epochs with descriptive statistics
 eeg_epochs <- ddply(eeg_data, c('subject', 'epoch', 'condition'), summarise,
