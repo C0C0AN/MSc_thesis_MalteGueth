@@ -10,3 +10,14 @@ EEG and fMRI data
 in both cases it is hard to choose or to argue what configuration of the single trial data is best to choose for N-PLS, jICA,
 pICA and behavioral prediction models (i.e., baseline correction or not, which or how many points to choose in each EEG, which
 electrode to choose, contrasted fMRI data or t-maps, which threshold to choose for t-maps)
+
+2nd week
+- I completed my code for the NPLS in R and ran some test analyses with either partial or random data, all worked out fine
+- Unfortunately, I had some slip ups, because of the convolution of the EEG parameters (wrote code that produced an unsuitable hrf) and lost a bot of time to figuring out this mistake
+- I also still had issues with what kind of data to put into the NPLS and how to arrange it the best way
+- Plus, I only had group averaged spectral data and amplitude data for the EEG which is not taking full advantage of the fact that NPLS works with multidimensional signatures
+- Further, I was missing some multimodal application of spectral data as a potentially closer link to BOLD variation, which is why I decided to re-write the code for my time frequency analysis, deriving single trial measures for theta, alpha and beta power
+- The last one I chose, because I had previously noticed in the group level ERSP that there was interesting beta blocking around 500 ms after B
+- With these measures I calculated new fMRI GLMs (BOLD predicition with single trial theta power averaged over the most interesting time window) to find voxel clusters accounted for by fluctuating spectral power and contrasted results with amplitude regressors
+- In fact, the former (especially theta) had a stronger predictive power
+- For the fMRI part, I extracted time course activation for ROIs, but had the feeling I was limiting the analysis too much and should preferably create single trial measures with the entire voxel space (so in the end, spatial clusters could be assigned weights for specific spectral signatures), which is why I also re-wrote the this part of the fMRI analysis and ran it
