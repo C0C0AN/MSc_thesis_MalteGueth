@@ -74,51 +74,76 @@ black <- function(res, n.sim, ran.args) {
 
 #### EEG frequs
 
-logar_eeg <- ar(log(as.numeric((unlist(timef_eeg_a)))))
-model_eeg <- list(order = c(logar_eeg$order, 0, 0), ar = logar_eeg$ar)
-model_eeg_res <- logar_eeg$resid[!is.na(logar_eeg$resid)]
-model_eeg_res <- model_eeg_res - mean(model_eeg_res)
+logar_eeg_a <- ar(log(as.numeric((unlist(timef_eeg_a)))))
+model_eeg_a <- list(order = c(logar_eeg_a$order, 0, 0), ar = logar_eeg_a$ar)
+model_eeg_res_a <- logar_eeg_a$resid[!is.na(logar_eeg_a$resid)]
+model_eeg_res_a <- model_eeg_res_a - mean(model_eeg_res_a)
 
 # Resampling without post-blackening
-boot_block_eeg <- tsboot(model_eeg_res, stat, R = 99, sim = "model", n.sim = 114,
+boot_block_eeg_a <- tsboot(model_eeg_res_a, stat, R = 99, sim = "model", n.sim = 114,
                    orig.t = FALSE, ran.gen = sim, 
-                   ran.args = list(ts = log(as.numeric(unlist(timef_eeg_a))), model = model_eeg))
+                   ran.args = list(ts = log(as.numeric(unlist(timef_eeg_a))), model = model_eeg_a))
+
 
 # Resampling with post-blackening
-boot_block_eeg_black <- tsboot(model_eeg_res, stat, R = 99, l = 20, sim = "fixed",
+boot_block_eeg_black_a<- tsboot(model_eeg_res_a, stat, R = 99, l = 20, sim = "fixed",
                   n.sim = 114, orig.t = FALSE, ran.gen = black, 
-                  ran.args = list(ts = log(as.numeric(unlist(timef_eeg_a))), model = model_eeg))
+                  ran.args = list(ts = log(as.numeric(unlist(timef_eeg_a))), model = model_eeg_a))
 
 # To compare the two models, check on fit to original data points (superior with post-blackening)
-table(boot_block_eeg$t[, 1])
-table(boot_block_eeg_black$t[, 1])
+table(boot_block_eeg_a$t[, 1])
+table(boot_block_eeg_black_a$t[, 1])
 
+logar_eeg_b <- ar(log(as.numeric((unlist(timef_eeg_b)))))
+model_eeg_b <- list(order = c(logar_eeg_b$order, 0, 0), ar = logar_eeg_b$ar)
+model_eeg_res_b <- logar_eeg_b$resid[!is.na(logar_eeg_b$resid)]
+model_eeg_res_b <- model_eeg_res_b - mean(model_eeg_res_b)
+
+boot_block_eeg_black_b <- tsboot(model_eeg_res_b, stat, R = 99, l = 20, sim = "fixed",
+                               n.sim = 114, orig.t = FALSE, ran.gen = black, 
+                               ran.args = list(ts = log(as.numeric(unlist(timef_eeg_b))), model = model_eeg_b))         
+               
 ### EEG amps
 
-logar_amp <- ar(as.numeric(unlist(time_series_a_eeg_amp, use.names = FALSE)))
-model_amp <- list(order = c(logar_amp$order, 0, 0), ar = logar_amp$ar)
-model_amp_res <- logar_amp$resid[!is.na(logar_amp$resid)]
-model_amp_res <- model_amp_res - mean(model_amp_res)
-
-boot_block_amp_black <- tsboot(model_amp_res, stat, R = 99, l = 20, sim = "fixed",
+logar_amp_a <- ar(as.numeric(unlist(time_series_a_eeg_amp, use.names = FALSE)))
+model_amp_a <- list(order = c(logar_amp_a$order, 0, 0), ar = logar_amp_a$ar)
+model_amp_res_a <- logar_amp_a$resid[!is.na(logar_amp_a$resid)]
+model_amp_res_a <- model_amp_res_a - mean(model_amp_res_a)
+                        
+boot_block_amp_black_a <- tsboot(model_amp_res_a, stat, R = 99, l = 20, sim = "fixed",
                                n.sim = 114, orig.t = FALSE, ran.gen = black, 
-                               ran.args = list(ts = as.numeric(unlist(time_series_a_eeg_amp)), model = model_amp))
+                               ran.args = list(ts = as.numeric(unlist(time_series_a_eeg_amp)), model = model_amp_a))
+
+logar_amp_b <- ar(as.numeric(unlist(time_series_b_eeg_amp, use.names = FALSE)))
+model_amp_b <- list(order = c(logar_amp_b$order, 0, 0), ar = logar_amp_b$ar)
+model_amp_res_b <- logar_amp_b$resid[!is.na(logar_amp_b$resid)]
+model_amp_res_b <- model_amp_res_b - mean(model_amp_res_b)
+
+boot_block_amp_black_b <- tsboot(model_amp_res_b, stat, R = 99, l = 20, sim = "fixed",
+                                 n.sim = 114, orig.t = FALSE, ran.gen = black, 
+                                 ran.args = list(ts = as.numeric(unlist(time_series_b_eeg_amp)), model = model_amp_b))
 
 ### fMRI data
 
-logar_fmri <- ar(log(as.numeric((unlist(fmri_a[1:143,])))))
-model_fmri <- list(order = c(logar_fmri$order, 0, 0), ar = logar_fmri$ar)
-model_fmri_res <- logar_fmri$resid[!is.na(logar_fmri$resid)]
-model_fmri_res <- model_fmri_res - mean(model_fmri_res)
+logar_fmri <- ar(log(as.numeric((unlist(fmri_a)))))
+logar_fmri_a <- ar(log(as.numeric((unlist(time_series_fmri_a)))))
+model_fmri_a <- list(order = c(logar_fmri$order, 0, 0), ar = logar_fmri$ar)
+model_fmri_res_a <- logar_fmri$resid[!is.na(logar_fmri$resid)]
+model_fmri_res_a <- model_fmri_res - mean(model_fmri_res)
 
-boot_block_fmri <- tsboot(model_fmri_res, stat, R = 99, sim = "model", n.sim = 114,
-                         orig.t = FALSE, ran.gen = sim, 
-                         ran.args = list(ts = log(as.numeric(unlist(fmri_a[1:142,]))), model = model_fmri))
-
-boot_block_fmri_black <- tsboot(model_fmri_res, stat, R = 99, l = 20, sim = "fixed",
+boot_block_fmri_black_a <- tsboot(model_fmri_res_a, stat, R = 99, l = 20, sim = "fixed",
                                n.sim = 114, orig.t = FALSE, ran.gen = black, 
-                               ran.args = list(ts = log(as.numeric(unlist(fmri_a[1:142,]))), model = model_fmri))
+                               ran.args = list(ts = log(as.numeric(unlist(time_series_fmri_a[1:143,]))), model = model_fmri_a))
 
+logar_fmri_b <- ar(log(as.numeric((unlist(time_series_fmri_b)))))
+model_fmri_b <- list(order = c(logar_fmri_b$order, 0, 0), ar = logar_fmri_b$ar)
+model_fmri_res_b <- logar_fmri_b$resid[!is.na(logar_fmri_b$resid)]
+model_fmri_res_b <- model_fmri_res_b - mean(model_fmri_res_b)
+
+boot_block_fmri_black_b <- tsboot(model_fmri_res_b, stat, R = 99, l = 20, sim = "fixed",
+                                  n.sim = 114, orig.t = FALSE, ran.gen = black, 
+                                  ran.args = list(ts = log(as.numeric(unlist(time_series_fmri_b))), model = model_fmri_b))
+                      
 # Run perumtation of correlation tests
 
 corperm <- function(x, y, N=1000, plot=FALSE){
