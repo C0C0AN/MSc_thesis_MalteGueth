@@ -32,6 +32,10 @@ Xhat_b3 <- fitted(pfac_b2)
 
 # Calculate the Corcodndia cirterium fit, Bro's and Kiers’s core consistency diagnostic
 corcondia(Xa, pfac_a2, divisor=c("nfac","core"))
+corcondia(Xa, pfac_a3, divisor=c("nfac","core"))
+
+corcondia(Xb, pfac_b2, divisor=c("nfac","core"))
+corcondia(Xb, pfac_b3, divisor=c("nfac","core"))
 
 # Plot the distibution of a component's power over EEG spectrum (1-30 Hz)
 
