@@ -33,15 +33,22 @@ Xhat_b3 <- fitted(pfac_b2)
 # Calculate the Corcodndia cirterium fit, Bro's and Kiers’s core consistency diagnostic
 corcondia(Xa, pfac_a2, divisor=c("nfac","core"))
 
-plot(pfac_a$B, type = "n", ylim = range(-2.5, 2.5), xlim = range(1, 30),
-     xlab = 'Frequency [Hz]', ylab = 'Power', lwd = 5)
+# Plot the distibution of a component's power over EEG spectrum (1-30 Hz)
+
+power_spec = range(-2.5, 2.5)
+frequencies = range(1, 30)
+xlab = 'Frequency [Hz]'
+ylab = 'Power'
+
+plot(pfac_a2$B, type = "n", ylim = power_spec, xlim = frequencies,
+     xlab = xlab, ylab = ylab, lwd = 5)
 lines(pfac_a2$B[, 1], col='darkred')
 lines(pfac_a2$B[, 2], col='deepskyblue4')
 legend(list(x = 2,y = 2), legend = c("Beta", "Alpha/Theta"), pch = 15, bty = "o", 
        col = c('darkred', 'deepskyblue4'))
 
-plot(pfac_b$B, type = "n", ylim = range(-2.5, 2.5), xlim = range(1, 30),
-     xlab = 'Frequency [Hz]', ylab = 'Power', lwd = 5)
+plot(pfac_b2$B, type = "n", ylim = power_spec, xlim = frequencies,
+     xlab = xlab, ylab = ylab, lwd = 5)
 lines(pfac_b2$B[, 1], col='deepskyblue4')
 lines(pfac_b2$B[, 2], col='darkred')
 legend(list(x = 2,y = -1), legend = c("Theta", "Alpha"), pch = 15, bty = "o", 
