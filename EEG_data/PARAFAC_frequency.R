@@ -48,12 +48,16 @@ plot(pfac_a2$B, type = "n", ylim = power_spec, xlim = frequencies,
      xlab = xlab, ylab = ylab, lwd = 5)
 lines(pfac_a2$B[, 1], col='darkred')
 lines(pfac_a2$B[, 2], col='deepskyblue4')
-legend(list(x = 2,y = 2), legend = c("Beta", "Alpha/Theta"), pch = 15, bty = "o", 
+rect(3,-4,5,4,col = rgb(0.5,0.5,0.5,1/4))
+rect(10,-4,12,4,col = rgb(0.5,0.5,0.5,1/4))
+legend(list(x = 2,y = 2.5), legend = c("Component 1", "Component 2"), pch = 15, bty = "o", 
        col = c('darkred', 'deepskyblue4'))
 
 plot(pfac_b2$B, type = "n", ylim = power_spec, xlim = frequencies,
      xlab = xlab, ylab = ylab, lwd = 5)
-lines(pfac_b2$B[, 1], col='deepskyblue4')
-lines(pfac_b2$B[, 2], col='darkred')
-legend(list(x = 2,y = -1), legend = c("Theta", "Alpha"), pch = 15, bty = "o", 
+lines(pfac_b2$B[, 1], col='darkred')
+lines(pfac_b2$B[, 2], col='deepskyblue4')
+rect(6,-4,8,4,col = rgb(0.5,0.5,0.5,1/4))
+rect(3,-4,5,4,col = rgb(0.5,0.5,0.5,1/4))
+legend(list(x = 2,y = -1.5), legend = c("Component 1", "Component 2"), pch = 15, bty = "o", 
        col = c('deepskyblue4', 'darkred'))
