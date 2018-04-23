@@ -7,6 +7,7 @@
 ##### 
 
 library(boot)
+library(fpp)
 library(ggplot2)
 
 # Load EEG and fMRI times series data (in case of fmri reduced to cortical regions)
@@ -68,10 +69,20 @@ time_series_b_eeg_amp$condition <- NULL
 time_series_b_eeg_amp$epoch <- NULL
 
 
-# Test both time series for autocorrelation
+# Test both time series for autocorrelation or, more precisely, their residuals by fitting an autocorrelation model
 # If both are tested negative, resampling and perumtation tests for time segments can be performed
-arfit_eeg <- ar(timef_eeg, method = "burg", order.max = 25)
+arfit_eeg <- ar(timef_eeg[,55], method = "burg", order.max = 25)
 arfit_fmri <- ar(fmri_a, method = "burg", order.max = 25)
+
+# ... or use the forecasting package                      
+                        
+xts <- ts(timef_frequ_a[,55],start=1,frequency=142) #convert to a time series
+yts <- ts(fmri_a,start=1,frequency=142) #convert to a time series
+
+mod1 <- auto.arima(xts)
+mod2 <- auto.arima(yts)
+
+ccf(mod1$residuals, mod2$residuals)
 
 # To correlate time series, resample both data sets in blocks of points compensating for weak dependence of observations
 # In this case, the resampling is not based on a fixed term, but on an empirical data model (i.e., basing
