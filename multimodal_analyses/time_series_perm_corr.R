@@ -290,3 +290,98 @@ ggplot(ts_amp, aes(xcent, ycent, color=Cue)) + geom_point() +
   labs(x = "Centered EEG Frequency Power", y = "Centered fMRI TS DLPFC") +
   coord_cartesian(xlim = c(-1, 2), ylim = c(-2, 2)) +
   theme_classic()
+                        
+
+# Finally, bring all relevant data columns together in a data frame of a specific condition, compute a cross
+# correlation matrix for all time series data (using cff function) and plot correlated times series data
+                        
+all_ts_b <- data.frame(as.numeric(as.character(unlist(timef_frequ_b[,55]))), 
+                     as.numeric(as.character(unlist(timef_frequ_b[,56]))),
+                     as.numeric(as.character(unlist(time_series_b_eeg_amp[,19]))),
+                     as.numeric(as.character(unlist(fmri_b_mfg[,1]))),
+                     as.numeric(as.character(unlist(fmri_b_ifg[,1]))),
+                     as.numeric(as.character(unlist(fmri_b_postcc[,1]))),
+                     as.numeric(as.character(unlist(fmri_b_prepc[,1])))
+)
+names(all_ts_b)[1] <- "theta"
+names(all_ts_b)[2] <- "alpha"
+names(all_ts_b)[3] <- "amplitude"
+names(all_ts_b)[4] <- "MFG"
+names(all_ts_b)[5] <- "IFG"
+names(all_ts_b)[6] <- "CC"
+names(all_ts_b)[7] <- "preCG"
+                        
+all_ts_b$theta <- (all_ts_b$theta - mean(all_ts_b$theta)) / sd(all_ts_b$theta)
+all_ts_b$alpha <- (all_ts_b$alpha - mean(all_ts_b$theta)) / sd(all_ts_b$alpha)
+all_ts_b$amplitude <- (all_ts_b$amplitude - mean(all_ts_b$amplitude)) / sd(all_ts_b$amplitude)
+all_ts_b$MFG <- (all_ts_b$MFG - mean(all_ts_b$MFG)) / sd(all_ts_b$MFG)
+all_ts_b$IFG <- (all_ts_b$IFG - mean(all_ts_b$IFG)) / sd(all_ts_b$IFG)
+all_ts_b$CC <- (all_ts_b$CC - mean(all_ts_b$CC)) / sd(all_ts_b$CC)
+all_ts_b$preCG <- (all_ts_b$preCG - mean(all_ts_b$preCG)) / sd(all_ts_b$preCG)
+
+correlationTable = function(graphs) {
+  cross = matrix(nrow = length(graphs), ncol = length(graphs))
+  for(graph1Id in 1:length(graphs)){
+    graph1 = graphs[[graph1Id]]
+    print(graph1Id)
+    for(graph2Id in 1:length(graphs)) {
+      graph2 = graphs[[graph2Id]]
+      if(graph1Id == graph2Id){
+        break;
+      } else {
+        correlation = ccf(graph1, graph2, lag.max = 0)
+        cross[graph1Id, graph2Id] = correlation$acf[1]
+      }
+    }
+  }
+  cross
+}
+
+corr = correlationTable(all_ts_b)
+
+findCorrelated = function(orig, highCorr){
+  match = highCorr[highCorr[,1] == orig | highCorr[,2] == orig,]
+  match = as.vector(match)
+  match[match != orig]
+}
+
+highCorr = which(corr > 0.4 | corr < -0.4 , arr.ind = TRUE)
+match = findCorrelated(1, highCorr)
+match
+
+bound = function(graphs, orign, match) {
+  graphOrign = graphs[[orign]]
+  graphMatch = graphs[match]
+  allValue = c(graphOrign)
+  for(m in graphMatch){
+    allValue = c(allValue, m)
+  }
+  c(min(allValue), max(allValue))
+}
+
+plotSimilar = function(graphs, orign, match){
+  lim = bound(graphs, orign, match)
+  
+  graphOrign = graphs[[orign]]
+  plot(ts(graphOrign), ylim=lim, xlim=c(1,length(graphOrign)), lwd=3)
+  title(paste("Similar to", orign, "(black bold)"))
+  
+  cols = c()
+  names = c()
+  for(i in 1:length(match)) {
+    m = match[[i]]
+    matchGraph = graphs[[m]]
+    lines(x = 1:length(matchGraph), y=matchGraph, col=i)
+    
+    cols = c(cols, i)
+    names = c(names, paste0(m))
+  }
+  legend("topright", names, col = cols, lty=c(1,1))
+}
+
+plotSimilar(all_ts_b, 4, match)
+
+########### Stats for correlations
+df <- length(graphs) - 2
+t <- sqrt(df) * 0.9/sqrt(1 - 0.9^2)
+p <- 2 * min(pt(t, df), pt(t, df, lower.tail = FALSE))
