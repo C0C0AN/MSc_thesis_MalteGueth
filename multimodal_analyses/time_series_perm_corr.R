@@ -86,10 +86,9 @@ ccf(mod1$residuals, mod2$residuals)
 
 # To correlate time series, resample both data sets in blocks of points compensating for weak dependence of observations
 # In this case, the resampling is not based on a fixed term, but on an empirical data model (i.e., basing
-# resampling on data point and data resiudals distribution
+# resampling on data point and data resiudals distribution)
 # Necessary functions for simulations, statistics to be computed and post-blackening
 
-# Create the function to be applied in the bootstrapping, determining statistics to be returned
 # Create the function to be applied in the bootstrapping, determining statistics to be returned
 meanN <- function(df, n){
     df %>% group_by(G=(0:(n()-1))%/%n) %>%  summarise(mean=mean(df[,1])) %>% select(-G)
