@@ -23,7 +23,7 @@ electrode to choose, contrasted fMRI data or t-maps, which threshold to choose f
 - For the fMRI part, I extracted time course activation for ROIs, but had the feeling I was limiting the analysis too much and should preferably create single trial measures with the entire voxel space (so in the end, spatial clusters could be assigned weights for specific spectral signatures), which is why I also re-wrote the this part of the fMRI analysis and ran it
 
 3rd
-- I finally completed all uni- and multimodal analyses for my master thesis (NPLS, times series analyses, induced and evoked time-frequency) and uploaded some of the code
+- I finally completed all uni- and multimodal analyses for my master thesis (NPLS, times series analyses, parallel factor analysis for time-frequency data, induced and evoked time-frequency, etc) and uploaded some of the code
 - I still have concerns regarding the statistical validity of some results (, which I discuss in some exerts of my discussion section), either due to the nature of different single trial measures for fMRI in my experiment, bootstrapping procedures or other issues, but I think that the current status of results is sufficient for my thesis
 - In order to bring everything together, I started writing on a model for neuronal processing of cues in the DPX
 - While writing, I became even more confident in the benefits of a multimodal data perspective, but the abudnance of information, selective constraints, statistical assumptions as well as drawbacks of single trial estimates are worthwhile discussing
