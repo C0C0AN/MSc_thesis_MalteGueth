@@ -13,9 +13,69 @@
 # the aforementioned grouping variables.
 
 library(lme4)
-library(arm)
-lmm.data <- read.table("/Volumes/INTENSO/DPX_EEG_fMRI/multilevel/multimodal_param.txt", 
-                       header = TRUE, sep = ",", na.strings = "NA", dec = ".", strip.white = TRUE)
+library(car)
+library(plyr)
+library(r2glmm)
+
+# Load behavioral data with block and cuetype numbers
+
+RT <- read.table('Behavioral_Data/Rtables/rt_corrects_single_trial_multilevel.txt', 
+                 header = TRUE, sep = "", na.strings = "NA", dec = ".", strip.white = TRUE)
+
+# Load fMRI data
+
+ts_fmri_mfg <- read.table('fMRI/output/ts/single_trial_fmri_mfg.txt', 
+                              header = FALSE, sep = "", na.strings = "NA", dec = ".", strip.white = TRUE)
+ts_fmri_ifg <- read.table('fMRI/output/ts/single_trial_fmri_infFGtriangularis.txt', 
+                              header = FALSE, sep = "", na.strings = "NA", dec = ".", strip.white = TRUE)
+
+ts_fmri_dlpfc <- data.frame(rowMeans(ts_fmri_mfg[1:1087,]), rowMeans(ts_fmri_ifg[1:1087,]))
+
+times_ab <- read.table('fMRI/output/times/all_fmri_times.txt', 
+                       header = FALSE, sep = "", na.strings = "NA", dec = ".", strip.white = TRUE)
+
+acols <- as.data.frame((times_ab[1:1924,] >= 0 & times_ab[1:1924,] <= 1.5))
+bcols <- (times_ab[1925:2535,] >= 0 & times_ab[1925:2535,] <= 1.5)
+
+times_a <- (which(apply(acols, 2, function(x) any(grepl(TRUE, x)))))
+times_b <- (which(apply(bcols, 2, function(x) any(grepl(TRUE, x)))))
+                        
+ts_fmri_a_dlpfc <- data.frame(ts_fmri_dlpfc[times_a[1:1924],])
+ts_fmri_b_dlpfc <- data.frame(ts_fmri_dlpfc[times_b[1925:2535],])
+
+names(ts_fmri_a_dlpfc)[1] <- "V1"
+names(ts_fmri_b_dlpfc)[1] <- "V1"
+ts_fmri_dlpfc <- rbind(ts_fmri_a_dlpfc, ts_fmri_b_dlpfc)
+                        
+# Load EEG data
+                        
+pathsa <- dir('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/time_frequency/txt/signatures/A/', full.names = T)
+names(pathsa) <- basename(pathsa)
+timef_eeg_a <- plyr::ldply(pathsa, read.table, header = F, sep ='')
+
+pathsb <- dir('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/time_frequency/txt/signatures/B/', full.names = T)
+names(pathsb) <- basename(pathsb)
+timef_eeg_b <- plyr::ldply(pathsb, read.table, header = F, sep ='')
+
+ts_eeg <- data.frame(c(timef_eeg_a, timef_eeg_b))
+                        
+# Combine all
+                        
+lmm.data <- data.frame(as.numeric(as.character(unlist(ts_eeg))),
+                       as.numeric(as.character(unlist(ts_fmri_preCG))),
+                       as.numeric(as.character(RT))
+)
+
+lmm.data$block <- as.factor(c(rep(c(rep(0,35), rep(1,35), rep(2,35), rep(3,37)),13), 
+                    rep(c(rep(0,10), rep(1,10), rep(2,10), rep(3,13)),13)))
+
+lmm.data$type <- as.factor(c(rep(0,1846), rep(1,559)))
+
+names(lmm.data)[1] <- "alpha"
+names(lmm.data)[2] <- "preCG"
+names(lmm.data)[3] <- "RT"
+lmm.data$type <- RT$type
+lmm.data$block <- RT$block
 
 # Different Non-multilevel model specifications
 
@@ -47,8 +107,17 @@ model <- dlply(lmm.data, .(time, date), function(x) glm(RT ~ EEG + MRI + trialty
 
 # ... or use lmer with (1|group effect) 
 
-model <- lmer(RT ~ EEG + MRI + trialtype:block + (1 | date), data = lmm.data)
+model1 <- lmer(as.numeric(RT) ~ (1 | block/type), data = lme_data, REML=FALSE)
+model2 <- lmer(as.numeric(RT) ~ alpha + (1 | block/type), data = lme_data, REML=FALSE)
+model3 <- lmer(as.numeric(RT) ~ alpha + preCG + (1 | block/type), data = lme_data, REML=FALSE)
+sum <- anova(model1, model2, model3, test = 'F')
 
+mod1r <- r2beta(model1, method = 'nsj')
+mod2r <- r2beta(model2, method = 'nsj')
+mod3r <- r2beta(model3, method = 'nsj')
+
+r2diff <- r2dt(x=mod3r, y = mod2r, cor = TRUE)
+               
 # To modify random effects (varying intercepts for grouping variables) include grouping terms 
 # (1|date/time) fits a varying intercept model for dates and test times nested 
 # within dates
