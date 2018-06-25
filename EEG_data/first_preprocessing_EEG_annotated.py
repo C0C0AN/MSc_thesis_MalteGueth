@@ -3,8 +3,6 @@ Created on Wed Oct 25 06:07:15 2017
 
 @author: Malte R. Güth
 """
-# First attempt at transferring the first half of EEG preprocessing from matlab to mne python
-
 import mne
 import mne.io.eeglab
 
