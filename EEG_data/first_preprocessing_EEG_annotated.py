@@ -8,6 +8,9 @@ Created on Wed Oct 25 06:07:15 2017
 import mne
 import mne.io.eeglab
 
+import glob
+import os
+
 from mne.preprocessing import ICA
 from mne.preprocessing import create_ecg_epochs
 from mne.preprocessing.ica import corrmap 
@@ -15,7 +18,10 @@ from mne.preprocessing.ica import corrmap
 # Build the digital montage of your eeg system
 # It's also possible to specifiy a path to a montage file
 # with ‘.elc’, ‘.txt’, ‘.csd’, ‘.elp’, ‘.hpts’, ‘.sfp’, ‘.loc’ 
-# (‘.locs’ and ‘.eloc’) or .bvef as supported data formats
+# (‘.locs’ and ‘.eloc’) or .bvef as supported data formats.
+
+# This step is not necessary for everything to work, 
+# but serves the documentation of system details.
 
 montage = mne.channels.read_montage(kind='standard_1005')
 s_freq = 5000
@@ -29,20 +35,21 @@ ch_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',
             'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg', 'eeg', 'ecg']
 montage = mne.channels.read_montage(kind='standard_1005')
 info_custom = mne.create_info(chanlabels, s_freq, ch_types, montage=montage)
-info_custom['description'] = 'Simultaneously recorded data with customised info file'
+info_custom['description'] = 'Simultaneously recorded data corrected for gradient artefacts'
+
+path = './EEG/GradCorrected/'
 
 # Start a for loop for basic preprocessing (filter, resampling, rereferencing, ICA)
 # with each iteration of x added to your data path indicating the subject
-for x in range(1, 14):
-    
-    # Each time the loop goes through a new iteration, 
-    # add a subject integer to the data path
-    data_path = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/GradCorrected/Sub%d.set' % (x) 
-    
+for file in glob.glob(os.path.join(path, '*.set')):
+  
+    filepath, filename = os.path.split(file)
+    filename, ext = os.path.splitext(filename)
+   
     # Read the raw EEG data that has been corrected for gradient artifacts
-    raw = mne.io.read_raw_eeglab(data_path, montage=montage, event_id=None, 
-                               event_id_func='strip_to_integer', preload=True, 
-                               verbose=None, uint16_codec=None) 
+    raw = mne.io.read_raw_eeglab(file, montage=montage, event_id=None, 
+                                 event_id_func='strip_to_integer', preload=True, 
+                                 verbose=None, uint16_codec=None) 
     
     # Replace the mne info structure with the customised one
     # that has the corect labels, channel types and positions
@@ -72,7 +79,7 @@ for x in range(1, 14):
     
     # Save raw data with same naming convention as above
     # with the addition of _preprocessed_raw.fif.gz
-    raw.save('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d_preprocessed_raw.fif.gz' % (x)) 
+    raw.save('./DPX_EEG_fMRI/EEG/ + filename + '-raw.fif.gz') 
     
     # Specifiy ICA arguments
     # Specify the number of components for the ICA 
@@ -84,7 +91,7 @@ for x in range(1, 14):
     # If None, all samples within start and stop are used
     # Higher decimation decreases statistics accuracy, but saves time
     decim = 3 
-    # Specify data rejection parameters with reject argument 
+    # If required, specify data rejection parameters with reject argument 
     # to avoid the distortion of ica components by large artifacts
     reject_eeg = dict(eeg=600e-6)
     reject_ecg = dict(ecg=2000e-6)
@@ -92,9 +99,9 @@ for x in range(1, 14):
     # Create ICA object
     ica = ICA(n_components=n_components, method=method) 
     # Fit ICA on raw data
-    ica.fit(raw, picks=picks_eeg, decim=decim, reject=None) 
+    ica.fit(raw, picks=picks_all, decim=decim, reject=None) 
     # Save ICA object
-    ica.save('/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d-ica.fif.gz' % (x)) 
+    ica.save('./DPX_EEG_fMRI/EEG/ICA/ + filename + '-ica.fif.gz') 
     
     
 # Look at topomaps for all n components of a subject
@@ -140,10 +147,14 @@ ica.apply(raw, exclude=None, start=None, end=None)
 reference_ica = ica
 icas_remaining_subjects = list()
 
-for i in range(1, 14):
-     data_path2 = '/Volumes/INTENSO/DPX_EEG_fMRI/EEG/Sub%d-ica.fif.gz' % (i)
-     current_ica = mne.preprocessing.read_ica(data_path2)
-     icas_remaining_subjects.append(current_ica)
+path_ica = path + '/ICA'
+for file in glob.glob(os.path.join(path_ica, '*.set')):
+  
+    filepath, filename = os.path.split(file)
+    filename, ext = os.path.splitext(filename)
+             
+    current_ica = mne.preprocessing.read_ica(file)
+    icas_remaining_subjects.append(current_ica)
 
 all_icas = [reference_ica] + icas_remaining_subjects
 
