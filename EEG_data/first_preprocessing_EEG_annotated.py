@@ -39,8 +39,12 @@ info_custom['description'] = 'Simultaneously recorded data corrected for gradien
 
 path = './EEG/GradCorrected/'
 
-# Start a for loop for basic preprocessing (filter, resampling, rereferencing, ICA)
-# with each iteration of x added to your data path indicating the subject
+# Start a for loop for basic pre-processing (filter, resampling, rereferencing, ICA)
+# with each iteration representing a data set in the path where you stored the raw data. Note that
+# each data set has been previously cut to the length of the actual experiment
+# and has been corrected for gradient artefacts in eeglab with the Bergen toolbox 
+# (http://fmri.uib.no/tools/bergen_plugin.htm). For this reason, data sets have to be imported
+# with 'read_raw_eeglab' and have been saved as raw '.set' files.
 for file in glob.glob(os.path.join(path, '*.set')):
   
     filepath, filename = os.path.split(file)
@@ -74,8 +78,11 @@ for file in glob.glob(os.path.join(path, '*.set')):
     # as mastoid reference
     raw.set_eeg_reference(ref_channels=['TP9','TP10']) 
     
-    # Resample the data from 5 kHz to 250 Hz
-    raw.resample(250, npad="auto") 
+    # Resample the data from 5 kHz to 250 Hz. Please mind that for optimal results 
+    # the data should be kept at the original sampling rate of 5 kHz when fitting 
+    # the ICA. When running tests or example data, you can resample to 250 Hz to make 
+    # the ICA run a lot faster. Otherwise, plan in some time for the ICA to run.
+    raw.resample(250) 
     
     # Save raw data with same naming convention as above
     # with the addition of _preprocessed_raw.fif.gz
@@ -85,7 +92,7 @@ for file in glob.glob(os.path.join(path, '*.set')):
     # Specify the number of components for the ICA 
     # with decreasing explained variance of PCA
     n_components = 25  
-    # Specify the ICA algorithm 
+    # Specify the ICA algorithm. Again, for tests you can run the quicker algorithm 'fastica'.
     method = 'extended-infomax'
     # decim argument specifies the increment for selecting each nth time slice
     # If None, all samples within start and stop are used
