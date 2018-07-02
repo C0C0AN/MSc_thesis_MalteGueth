@@ -9,8 +9,6 @@ import glob
 
 import mne
 
-montage = mne.channels.read_montage(kind='standard_1005')
-
 # Create ERPs with Global Field Power (GFP) for pre-processed EEG data and save the plots as pdf. 
 # Load single subject evoked data and create lists for all epochs (i.e. Cue A and B).
 
