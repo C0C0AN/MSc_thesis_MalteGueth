@@ -14,7 +14,7 @@ import os.path as op
 import pandas as pd
 import numpy as np
 
-for x in range(1, 14):
+for x in range(14):
     
     # Each time the loop goes through a new iteration, 
     # add a subject integer to the data path
@@ -22,27 +22,25 @@ for x in range(1, 14):
     
     subject_dir = op.join(data_path, 'MNE/Sub%d_preprocessed_raw.fif') % (x) 
     event_dir = op.join(data_path, 'events/Sub%d_preprocessed_raw-eve.fif') % (x) 
-    output_dir = op.join(data_path, 'MNE/epochs/Sub%d_preprocessed_epochs.fif') % (x)
+    output_dir = op.join(data_path, 'MNE/epochs/Sub%d_preprocessed_epochs-epo.fif') % (x)
 
     
     # Read the raw EEG data that has been preprocessed
     raw = mne.io.read_raw_fif(subject_dir, event_id=None, preload=True)
     
     # Define the stimulus labels for epoching
-    event_id = {'A': {70, 71, 72, 73, 74}, 'B': {75, 76, 77, 78, 79, 80, 81, 82, 83}}
+    event_id = {'A': 70, 'B/1': 71, 'B/2': 72, 'B/3': 73, 'B/4': 74, 'B/5': 75}
     events = mne.read_events(event_dir)
     
     # Epoch the preprocessed data with a baseline of -200 ms and 1000 ms after the stimulus onset,
     # save the data as fif and as a pandas DataFrame
-    epochs = mne.Epochs(raw, events, event_id=event_id, tmin=-0.2, tmax=1.0)
+    epochs = mne.Epochs(raw, events=events, event_id=event_id, tmin=-0.2, tmax=1.0,
+                        baseline=(-0.25, 0))
     epochs.save(output_dir)
     
     # Apply baseline correction and average epoched data over conditions
     evoked_cueA = epochs['A'].average()
-    evoked_cueA.apply_baseline(-0.25, 0)
     evoked_cueB = epochs['B'].average()
-    evoked_cueB.apply_baseline(-0.25, 0)
-
     
 
 # Preprare single trial data for higher level analyses in Python as well as for importing data to R
@@ -52,7 +50,7 @@ for x in range(1, 14):
 # 1) Combine all subject data sets by looping through all epochs, converting them to DataFrames, appending
 # them with '.append' and save them to a csv with '.to_csv'
 
-for i in range(1, 14):
+for i in range(14):
     index, scaling_time = ['epoch', 'time'], 1e3
     epochs = '/Sub%d_preprocessed_epochs.fif' % (i)
     current_epochs = mne.read_epochs(epochs)
