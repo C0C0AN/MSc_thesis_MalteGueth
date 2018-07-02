@@ -22,18 +22,6 @@ from mne.preprocessing.ica import corrmap
 # but serves the documentation of system details.
 
 montage = mne.channels.read_montage(kind='standard_1005')
-s_freq = 5000
-chanlabels = ['Fp1',	'Fp2',	'F3',	'F4',	'C3',	'C4',	'P3',	'P4',	
-              'O1',	'O2',	'F7',	'F8',	'T7',	'T8',	'P7',	'P8',	
-              'Fz',	'Cz',	'Pz',	'Oz',	'FC1',	'FC2',	'CP1',	'CP2',	
-              'FC5',	'FC6',	'CP5',	'CP6',	'TP9',	'TP10', 'POz', 'ECG']
-ch_types = ['eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
-            'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
-            'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	
-            'eeg',	'eeg',	'eeg',	'eeg',	'eeg',	'eeg', 'eeg', 'ecg']
-montage = mne.channels.read_montage(kind='standard_1005')
-info_custom = mne.create_info(chanlabels, s_freq, ch_types, montage=montage)
-info_custom['description'] = 'Simultaneously recorded data corrected for gradient artefacts'
 
 path = './EEG/GradCorrected/'
 
@@ -50,12 +38,7 @@ for file in glob.glob(os.path.join(path, '*.set')):
    
     # Read the raw EEG data that has been corrected for gradient artifacts
     raw = mne.io.read_raw_eeglab(file, montage=montage, event_id=None, 
-                                 event_id_func='strip_to_integer', preload=True, 
-                                 verbose=None, uint16_codec=None) 
-    
-    # Replace the mne info structure with the customised one
-    # that has the corect labels, channel types and positions
-    raw.info = info_custom
+                                 event_id_func='strip_to_integer', preload=True)
     
     # Specify channel selections   
     picks_eeg = mne.pick_types(raw.info, meg=False, eeg=True, eog=False, ecg=False,
@@ -69,8 +52,8 @@ for file in glob.glob(os.path.join(path, '*.set')):
     # as higher cut-off, n_jobs as amount of parallel jobs to run (default = 1),
     # and fir_design as specification of your finite impulse response filter
     # Apply a second band-pass filter only to the ECG channel
-    raw.filter(0.5, 30., n_jobs=1, fir_design='firwin', picks=picks_eeg) 
-    raw.filter(1, 20., n_jobs=1, fir_design='firwin', picks=picks_ecg) 
+    raw.filter(0.1, 30, fir_design='firwin', picks=picks_eeg) 
+    raw.filter(1, 20, ir_design='firwin', picks=picks_ecg) 
     
     # Specify the offline reference for your data with TP9 and TP10 
     # as mastoid reference
@@ -89,13 +72,13 @@ for file in glob.glob(os.path.join(path, '*.set')):
     # Specifiy ICA arguments
     # Specify the number of components for the ICA 
     # with decreasing explained variance of PCA
-    n_components = 25  
+    n_components = 35  
     # Specify the ICA algorithm. Again, for tests you can run the quicker algorithm 'fastica'.
     method = 'extended-infomax'
     # decim argument specifies the increment for selecting each nth time slice
     # If None, all samples within start and stop are used
     # Higher decimation decreases statistics accuracy, but saves time
-    decim = 3 
+    decim = None
     # If required, specify data rejection parameters with reject argument 
     # to avoid the distortion of ica components by large artifacts
     reject_eeg = dict(eeg=600e-6)
